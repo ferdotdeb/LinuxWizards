@@ -151,7 +151,7 @@ create_ssh_key() {
 # Main execution
 main() {
     if ! test_git; then
-        print_error "No se puede continuar sin Git. El programa se cerrará."
+        print_error "Cannot proceed without Git. The program will exit."
         exit 1
     fi
     
