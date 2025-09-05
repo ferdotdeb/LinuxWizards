@@ -9,7 +9,7 @@ ssh_password=""
 
 # Git exists?
 
-init() {
+welcome() {
     echo "                                                                      ";
     echo " ██████╗ ██╗████████╗    ██╗    ██╗██╗███████╗ █████╗ ██████╗ ██████╗ ";
     echo "██╔════╝ ██║╚══██╔══╝    ██║    ██║██║╚══███╔╝██╔══██╗██╔══██╗██╔══██╗";
@@ -150,6 +150,8 @@ create_ssh_key() {
 
 # Main execution
 main() {
+    welcome
+
     if ! test_git; then
         print_error "Cannot proceed without Git. The program will exit."
         exit 1

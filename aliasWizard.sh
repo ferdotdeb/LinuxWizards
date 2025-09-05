@@ -1,7 +1,7 @@
 #!/bin/bash
 source ./common_functions.sh  # Ensure this path is correct
 
-init() {
+welcome() {
     echo "                                                                                    ";
     echo " █████╗ ██╗     ██╗ █████╗ ███████╗    ██╗    ██╗██╗███████╗ █████╗ ██████╗ ██████╗ ";
     echo "██╔══██╗██║     ██║██╔══██╗██╔════╝    ██║    ██║██║╚══███╔╝██╔══██╗██╔══██╗██╔══██╗";
@@ -60,6 +60,7 @@ setup_bash_aliases() {
 
 # Main function to organize the script flow
 main() {
+    welcome
     setup_bash_aliases
     return 0
 }
