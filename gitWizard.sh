@@ -27,25 +27,24 @@ test_git() {
         git --version
         return 0
     else
-        print_warning "Git no está instalado. Intentando instalar..."
+        print_warning "Git is not installed. Attempting to install..."
         sudo apt update
         sudo apt install git -y
         
-        # Verificar si la instalación fue exitosa
+        # Verify if the installation was successful
         if command_exists git; then
-            print_success "Git se ha instalado correctamente"
+            print_success "Git has been installed successfully"
             echo "Git version:"
             git --version
             return 0
         else
-            print_error "No se pudo instalar Git. Por favor, instálelo manualmente e inténtelo de nuevo."
+            print_error "Git could not be installed. Please install it manually and try again."
             return 1
         fi
     fi
 }
 
-# Obtaining user info
-
+# Regex for email validation function
 validate_email() {
     local email=$1
     local regex="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
@@ -56,6 +55,7 @@ validate_email() {
     fi
 }
 
+# Obtaining user info
 collect_user_info() {
     echo "Please enter your personal information for Git configuration"
     
@@ -93,7 +93,7 @@ collect_user_info() {
     return 0
 }
 
-# Git global configs
+# Setting git global configs
 
 set_git_global_configs() {
     git config --global init.defaultBranch main
@@ -114,7 +114,6 @@ set_git_global_configs() {
 }
 
 # Creating SSH Keys
-
 create_ssh_key() {
     echo "Setting up SSH key..."
 

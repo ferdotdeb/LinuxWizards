@@ -16,7 +16,7 @@ setup_bash_aliases() {
     echo "Setting up bash aliases..."
     echo "You can see the list of all aliases documented in the README file"
     
-    # Lista de aliases a añadir
+    # List of aliases to add
     aliases=(
         "# Navigation"
         "alias sls='ls -lavh'"
@@ -47,7 +47,7 @@ setup_bash_aliases() {
         "alias glg='git log'"
     )
     
-    # Añadir cada alias a ~/.bashrc si no existe
+    # Add each alias to ~/.bashrc if it does not already exist
     for alias_line in "${aliases[@]}"; do
         if [[ -n "$alias_line" ]] && ! grep -qF "$alias_line" ~/.bashrc; then
             echo "$alias_line" >> ~/.bashrc
@@ -58,13 +58,13 @@ setup_bash_aliases() {
     return 0
 }
 
-# Función main para organizar el flujo del script
+# Main function to organize the script flow
 main() {
     setup_bash_aliases
     return 0
 }
 
-# Llamar a la función main si el script se ejecuta directamente
+# Call the main function if the script is executed directly
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     main
 fi
