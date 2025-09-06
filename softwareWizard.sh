@@ -170,13 +170,16 @@ install_docker() {
     
     sudo apt-get update
 
+    # Install Docker
+
+    sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
     print_success "Docker installed successfully for Ubuntu!"
         
-    else
-      print_error "Docker installation not supported for this distribution: $ID"
-
-      return 1
-    fi
+  else
+    print_error "Docker installation not supported for this distribution: $ID"
+    return 1
+  fi
     
   # Verify Docker installation
   if command_exists docker; then
@@ -186,14 +189,15 @@ install_docker() {
         
     # Add current user to docker group (optional)
     echo "Adding current user to docker group for non-root access..."
+
     if sudo usermod -aG docker "$USER"; then
       print_success "User added to docker group. Please log out and back in for changes to take effect."
     else
       print_warning "Failed to add user to docker group"
     fi
+
   else
     print_error "Docker installation verification failed"
-
     return 1
   fi
   
