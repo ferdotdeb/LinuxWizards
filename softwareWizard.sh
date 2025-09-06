@@ -115,152 +115,103 @@ install_uv() {
 }
 
 install_docker() {
-    echo "Installing Docker..."
+  echo "Installing Docker..."
     
-    # Check if Docker is already installed
-    if command_exists docker; then
-        print_success "Docker is already installed"
-        return 0
-    fi
-    
-    # Load OS information if not already loaded
-    if [ -z "$ID" ]; then
-        source /etc/os-release
-    fi
-    
-    # Install Docker based on distribution
-    if [[ "$ID" == "debian" ]] || [[ "$ID_LIKE" =~ debian ]]; then
-        echo "Installing Docker for Debian-based system..."
-        
-        # Update package list and install prerequisites
-        echo "Updating repositories..."
-        if ! sudo apt-get update; then
-            print_error "Failed to update package list"
-            return 1
-        fi
-        
-        if ! sudo apt-get install -y ca-certificates curl; then
-            print_error "Failed to install prerequisites"
-            return 1
-        fi
-        
-        # Create keyrings directory
-        echo "Setting up Docker GPG key..."
-        if ! sudo install -m 0755 -d /etc/apt/keyrings; then
-            print_error "Failed to create keyrings directory"
-            return 1
-        fi
-        
-        # Add Docker's official GPG key
-        if ! sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc; then
-            print_error "Failed to download Docker GPG key"
-            return 1
-        fi
-        
-        if ! sudo chmod a+r /etc/apt/keyrings/docker.asc; then
-            print_error "Failed to set permissions for Docker GPG key"
-            return 1
-        fi
-        
-        # Add Docker repository
-        echo "Adding Docker repository..."
-        if ! echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null; then
-            print_error "Failed to add Docker repository"
-            return 1
-        fi
-        
-        # Update package list with new repository
-        if ! sudo apt-get update; then
-            print_error "Failed to update package list after adding Docker repository"
-            return 1
-        fi
-        
-        # Install Docker
-        echo "Installing Docker packages..."
-        if ! sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin; then
-            print_error "Failed to install Docker packages"
-            return 1
-        fi
-        
-        print_success "Docker installed successfully for Debian!"
-        
-    elif [[ "$ID" == "ubuntu" ]]; then
-        echo "Installing Docker for Ubuntu..."
-        
-        # Update package list and install prerequisites
-        echo "Updating repositories..."
-        if ! sudo apt-get update; then
-            print_error "Failed to update package list"
-            return 1
-        fi
-        
-        if ! sudo apt-get install -y ca-certificates curl; then
-            print_error "Failed to install prerequisites"
-            return 1
-        fi
-        
-        # Create keyrings directory
-        echo "Setting up Docker GPG key..."
-        if ! sudo install -m 0755 -d /etc/apt/keyrings; then
-            print_error "Failed to create keyrings directory"
-            return 1
-        fi
-        
-        # Add Docker's official GPG key for Ubuntu
-        if ! sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc; then
-            print_error "Failed to download Docker GPG key"
-            return 1
-        fi
-        
-        if ! sudo chmod a+r /etc/apt/keyrings/docker.asc; then
-            print_error "Failed to set permissions for Docker GPG key"
-            return 1
-        fi
-        
-        # Add Docker repository for Ubuntu
-        echo "Adding Docker repository..."
-        if ! echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null; then
-            print_error "Failed to add Docker repository"
-            return 1
-        fi
-        
-        # Update package list with new repository
-        if ! sudo apt-get update; then
-            print_error "Failed to update package list after adding Docker repository"
-            return 1
-        fi
-        
-        # Install Docker
-        echo "Installing Docker packages..."
-        if ! sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin; then
-            print_error "Failed to install Docker packages"
-            return 1
-        fi
-        
-        print_success "Docker installed successfully for Ubuntu!"
-        
-    else
-        print_error "Docker installation not supported for this distribution: $ID"
-        return 1
-    fi
-    
-    # Verify Docker installation
-    if command_exists docker; then
-        echo "Docker version:"
-        docker --version
-        print_success "Docker installation completed successfully!"
-        
-        # Add current user to docker group (optional)
-        echo "Adding current user to docker group for non-root access..."
-        if sudo usermod -aG docker "$USER"; then
-            print_success "User added to docker group. Please log out and back in for changes to take effect."
-        else
-            print_warning "Failed to add user to docker group"
-        fi
-    else
-        print_error "Docker installation verification failed"
-        return 1
-    fi
-    
+  # Check if Docker is already installed
+  if command_exists docker; then
+    print_success "Docker is already installed"
     return 0
+  fi
+    
+  # Load OS information if not already loaded
+  if [ -z "$ID" ]; then
+    source /etc/os-release
+  fi
+    
+  # Install Docker based on distribution
+  if [[ "$ID" == "debian" ]] || [[ "$ID_LIKE" =~ debian ]]; then
+    echo "Installing Docker for Debian-based system..."
+    
+    # Add Docker's official GPG key:
+
+    sudo apt-get install ca-certificates curl
+    sudo install -m 0755 -d /etc/apt/keyrings
+    sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+    sudo chmod a+r /etc/apt/keyrings/docker.asc
+        
+    # Add the repository to Apt sources:
+    echo \
+      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
+      $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+      sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+    sudo apt-get update
+          
+    # Install Docker
+    sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+        
+    print_success "Docker installed successfully for Debian!"
+        
+  elif [[ "$ID" == "ubuntu" ]]; then
+    echo "Installing Docker for Ubuntu..."
+
+    # Add Docker's official GPG key:
+
+    sudo apt-get install ca-certificates curl
+    sudo install -m 0755 -d /etc/apt/keyrings
+    sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+    sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+    # Add the repository to Apt sources:
+    echo \
+      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+      $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
+      sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    
+    sudo apt-get update
+
+    print_success "Docker installed successfully for Ubuntu!"
+        
+    else
+      print_error "Docker installation not supported for this distribution: $ID"
+
+      return 1
+    fi
+    
+  # Verify Docker installation
+  if command_exists docker; then
+    echo "Docker version:"
+    docker --version
+    print_success "Docker installation completed successfully!"
+        
+    # Add current user to docker group (optional)
+    echo "Adding current user to docker group for non-root access..."
+    if sudo usermod -aG docker "$USER"; then
+      print_success "User added to docker group. Please log out and back in for changes to take effect."
+    else
+      print_warning "Failed to add user to docker group"
+    fi
+  else
+    print_error "Docker installation verification failed"
+
+    return 1
+  fi
+  
+  return 0
 }
+
+# Main execution
+main() {
+  welcome
+  install_apt_packages
+  install_google_chrome
+  install_vscode
+  install_uv
+  install_docker
+  return 0
+}
+
+# Run main if script is executed directly
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    main
+fi
