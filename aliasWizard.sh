@@ -27,15 +27,24 @@ setup_bash_aliases() {
         "alias ...='cd ../..'"
         "alias ....='cd ../../..'"
         ""
-        "# System"
+        "# APT shortcuts"
         "alias upg='sudo apt update && sudo apt upgrade -y'"
         "alias aptin='sudo apt install'"
         "alias aptrm='sudo apt remove'"
         "alias autorm='sudo apt autoremove'"
+        "# System shortcuts"
         "alias cls='clear'"
         "alias python='python3'"
         "alias shutdown='systemctl poweroff'"
         "alias reboot='systemctl reboot'"
+        ""
+        "# Docker and Kubernetes shortcuts"
+        "alias dc='docker'"
+        "alias dcu='docker-compose up -d'"
+        "alias dci='docker images'"
+        "alias dcps='docker ps'"
+        "alias kc='kubectl'"
+        "alias mc='minikube'"
         ""
         "# Git shortcuts"
         "alias gs='git status'"
@@ -55,6 +64,9 @@ setup_bash_aliases() {
     done
     
     print_success "Aliases configured successfully!"
+    echo "Reloading .bashrc file to activate aliases..."
+    source ~/.bashrc  # Reload ~/.bashrc to activate aliases immediately
+    print_success "Aliases activated successfully!"
     return 0
 }
 
