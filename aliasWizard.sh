@@ -10,6 +10,7 @@ welcome() {
     echo "██║  ██║███████╗██║██║  ██║███████║    ╚███╔███╔╝██║███████╗██║  ██║██║  ██║██████╔╝";
     echo "╚═╝  ╚═╝╚══════╝╚═╝╚═╝  ╚═╝╚══════╝     ╚══╝╚══╝ ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ";
     echo "                                                                                    ";
+    sleep 5
 }
 
 setup_bash_aliases() {
@@ -41,13 +42,16 @@ setup_bash_aliases() {
         "alias shutdown='systemctl poweroff'"
         "alias reboot='systemctl reboot'"
         ""
-        "# Docker and Kubernetes shortcuts"
+        "# Docker shortcuts"
         "alias dc='docker'"
         "alias dcu='docker-compose up -d'"
         "alias dci='docker images'"
         "alias dcps='docker ps'"
+        ""
+        "# Kubernetes shortcuts"
         "alias kc='kubectl'"
         "alias mc='minikube'"
+        "alias kcg='kubectl get pods'"
         ""
         "# Git shortcuts"
         "alias gs='git status'"
@@ -57,6 +61,8 @@ setup_bash_aliases() {
         "alias gpl='git pull'"
         "alias gsw='git switch'"
         "alias glg='git log'"
+        "alias gb='git branch'"
+        "alias gmg='git merge'"
     )
     
     # Add each alias to ~/.bashrc if it does not already exist
