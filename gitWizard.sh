@@ -7,8 +7,6 @@ git_username=""
 git_email=""
 ssh_password=""
 
-# Git exists?
-
 welcome() {
     echo "                                                                      ";
     echo " ██████╗ ██╗████████╗    ██╗    ██╗██╗███████╗ █████╗ ██████╗ ██████╗ ";
@@ -100,7 +98,6 @@ collect_user_info() {
 }
 
 # Setting git global configs
-
 set_git_global_configs() {
     echo "Setting Git global configurations..."
     sleep 3
@@ -109,7 +106,15 @@ set_git_global_configs() {
     git config --global user.email "$git_email"
     git config --global pull.rebase false
     git config --global push.autoSetupRemote true
-    
+    git config --global fetch.prune true
+    git config --global core.editor "nano"
+
+    # Signing (optional, if you use SSH and Git >= 2.34)
+    git config --global gpg.format ssh
+    git config --global user.signingkey ~/.ssh/id_ed25519.pub
+    git config --global commit.gpgsign true
+    git config --global tag.gpgSign true
+
     echo "Git global configurations:"
     echo "Name: $git_username"
     echo "Email: $git_email"
@@ -117,6 +122,10 @@ set_git_global_configs() {
     print_success "main"
     print_success "Pull strategy: merge (no rebase)"
     print_success "Push auto-setup: enabled"
+    print_success "Fetch prune: enabled"
+    print_success "Default editor: nano"
+    echo "GPG commit signing:"
+    print_success "enabled"
 
     sleep 3
 
