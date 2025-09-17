@@ -22,10 +22,13 @@ welcome() {
 }
 
 test_git() {
+    echo "Checking if Git is installed..."
+
     if command_exists git; then
         print_success "Git is already installed"
         echo "Git version:"
         git --version
+        sleep 3
         return 0
     else
         print_warning "Git is not installed. Attempting to install..."
@@ -37,6 +40,7 @@ test_git() {
             print_success "Git has been installed successfully"
             echo "Git version:"
             git --version
+            sleep 3
             return 0
         else
             print_error "Git could not be installed. Please install it manually and try again."
@@ -91,24 +95,30 @@ collect_user_info() {
     done
 
     print_success "Git user information collected successfully!"
+    sleep 3
     return 0
 }
 
 # Setting git global configs
 
 set_git_global_configs() {
+    echo "Setting Git global configurations..."
+    sleep 3
     git config --global init.defaultBranch main
     git config --global user.name "$git_username"
     git config --global user.email "$git_email"
     git config --global pull.rebase false
     git config --global push.autoSetupRemote true
-
+    
+    echo "Git global configurations:"
     echo "Name: $git_username"
     echo "Email: $git_email"
     echo "Default branch:"
     print_success "main"
     print_success "Pull strategy: merge (no rebase)"
     print_success "Push auto-setup: enabled"
+
+    sleep 3
 
     print_success "Git global configurations set successfully!"
     return 0
@@ -123,6 +133,7 @@ create_ssh_key() {
     print_success "SSH key created successfully!"
     
     # Set proper permissions for SSH keys
+    echo "Setting permissions for SSH keys..."
     chmod 600 ~/.ssh/id_ed25519
     chmod 644 ~/.ssh/id_ed25519.pub
     print_success "SSH key permissions set successfully!"
