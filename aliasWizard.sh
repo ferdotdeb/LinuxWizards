@@ -1,4 +1,5 @@
 #!/bin/bash
+
 source ./common_functions.sh  # Ensure this path is correct
 
 welcome() {
