@@ -34,14 +34,14 @@ install_google_chrome() {
     
     # Check if Chrome is already installed
     if command_exists google-chrome; then
-        print_success "Google Chrome is already installed"
-        return 0
+      print_success "Google Chrome is already installed"
+      return 0
     fi
     
     # Download Chrome
     if ! wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -O /tmp/chrome.deb; then
-        print_error "Failed to download Google Chrome"
-        return 1
+      print_error "Failed to download Google Chrome"
+      return 1
     fi
     
     # Install Chrome
@@ -49,9 +49,9 @@ install_google_chrome() {
         print_warning "dpkg installation failed, trying to fix dependencies"
         # Fix any dependency issues
         if ! sudo apt --fix-broken install -y; then
-            print_error "Failed to fix Chrome dependencies"
-            rm -f /tmp/chrome.deb
-            return 1
+          print_error "Failed to fix Chrome dependencies"
+          rm -f /tmp/chrome.deb
+          return 1
         fi
     fi
     
@@ -67,25 +67,25 @@ install_vscode() {
     
     # Check if VS Code is already installed
     if command_exists code; then
-        print_success "Visual Studio Code is already installed"
-        return 0
+      print_success "Visual Studio Code is already installed"
+      return 0
     fi
     
     # Download VS Code
     if ! wget -O /tmp/vscode.deb "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64"; then
-        print_error "Failed to download Visual Studio Code"
-        return 1
+      print_error "Failed to download Visual Studio Code"
+      return 1
     fi
     
     # Install VS Code
     if ! sudo DEBIAN_FRONTEND=noninteractive dpkg -i /tmp/vscode.deb; then
-        print_warning "dpkg installation failed, trying to fix dependencies"
-        # Fix any dependency issues with noninteractive mode
-        if ! sudo DEBIAN_FRONTEND=noninteractive apt --fix-broken install -y; then
-            print_error "Failed to fix VS Code dependencies"
-            rm -f /tmp/vscode.deb
-            return 1
-        fi
+      print_warning "dpkg installation failed, trying to fix dependencies"
+      # Fix any dependency issues with noninteractive mode
+      if ! sudo DEBIAN_FRONTEND=noninteractive apt --fix-broken install -y; then
+        print_error "Failed to fix VS Code dependencies"
+        rm -f /tmp/vscode.deb
+        return 1
+      fi
     fi
     
     # Clean up
@@ -100,16 +100,17 @@ install_uv() {
     echo "Downloading UV setup script..."
     
     if ! curl -LsSf https://astral.sh/uv/install.sh | sh; then
-        print_error "Failed to install UV"
-        return 1
+      print_error "Failed to install UV"
+      return 1
     fi
     
     echo "Restarting shell..."
+    
     if [ -f "$HOME/.local/bin/env" ]; then
-        source "$HOME/.local/bin/env"
-        print_success "UV installed successfully!"
+      source "$HOME/.local/bin/env"
+      print_success "UV installed successfully!"
     else
-        print_warning "UV environment file not found"
+      print_warning "UV environment file not found"
     fi
 
     return 0
@@ -218,5 +219,5 @@ main() {
 
 # Run main if script is executed directly
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    main
+  main
 fi
