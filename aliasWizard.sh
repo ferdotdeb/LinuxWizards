@@ -13,8 +13,30 @@ welcome() {
     sleep 5
 }
 
-setup_bash_aliases() {
-    echo "Setting up bash aliases..."
+# Function to detect the shell and define the configuration file
+detect_shell() {
+    echo "Detecting shell..."
+    sleep 2
+    echo "Current shell: $SHELL"
+    sleep 2
+
+    if [[ "$SHELL" == */bash ]]; then
+        config_file="$HOME/.bashrc"
+    elif [[ "$SHELL" == */zsh ]]; then
+        config_file="$HOME/.zshrc"
+    else
+        print_error "Unsupported shell. Only Bash or Zsh is supported."
+        return 1
+    fi
+
+    echo "Detected shell configuration file: $config_file"
+    sleep 2
+
+    return 0
+}
+
+setup_aliases() {
+    echo "Setting up aliases..."
     echo "You can see the list of all aliases documented in the README file"
     
     # List of aliases to add
@@ -65,16 +87,16 @@ setup_bash_aliases() {
         "alias gmg='git merge'"
     )
     
-    # Add each alias to ~/.bashrc if it does not already exist
+    # Add each alias to the detected config file if it does not already exist
     for alias_line in "${aliases[@]}"; do
-        if [[ -n "$alias_line" ]] && ! grep -qF "$alias_line" ~/.bashrc; then
-            echo "$alias_line" >> ~/.bashrc
+        if [[ -n "$alias_line" ]] && ! grep -qF "$alias_line" "$config_file"; then
+            echo "$alias_line" >> "$config_file"
         fi
     done
     
     print_success "Aliases configured successfully!"
-    echo "Reloading .bashrc file to activate aliases..."
-    source ~/.bashrc  # Reload ~/.bashrc to activate aliases immediately
+    echo "Reloading $config_file to activate aliases..."
+    source "$config_file"  # Reload the detected config file to activate aliases immediately
     print_success "Aliases activated successfully!"
     return 0
 }
@@ -82,7 +104,8 @@ setup_bash_aliases() {
 # Main function to organize the script flow
 main() {
     welcome
-    setup_bash_aliases
+    detect_shell || return 1
+    setup_aliases
     return 0
 }
 
