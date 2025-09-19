@@ -60,6 +60,7 @@ setup_aliases() {
         "# System shortcuts"
         "alias cls='clear'"
         "alias python='python3'"
+        "alias ff='fastfetch'"
         "alias shutdown='systemctl poweroff'"
         "alias reboot='systemctl reboot'"
         "# Docker shortcuts"
