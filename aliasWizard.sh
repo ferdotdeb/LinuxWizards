@@ -87,6 +87,10 @@ setup_aliases() {
         "alias gmg='git merge'"
         "alias gco='git checkout'"
         "alias gcl='git clone'"
+        "alias gdf='git diff'"
+        "alias gst='git stash'"
+        "alias grs='git reset --soft'"
+        "alias grh='git reset --hard'"
         "# Miscellaneous"
         "alias h='history'"
     )
