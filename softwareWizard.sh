@@ -16,7 +16,7 @@ welcome() {
 
 install_apt_packages() {
   # Packages to install
-  PKGS=(vim git fastfetch openssh-client solaar curl wget)
+  PKGS=(vim vlc git fastfetch openssh-client solaar curl wget)
 
   # If not root, re-execute with sudo
   if [ "$(id -u)" -ne 0 ]; then
