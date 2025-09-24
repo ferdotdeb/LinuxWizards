@@ -84,6 +84,8 @@ setup_aliases() {
         "alias gsw='git switch'"
         "alias glg='git log'"
         "alias gb='git branch'"
+        "alias gbd='git branch -d'"
+        "alias gba='git branch -a'"
         "alias gmg='git merge'"
         "alias gco='git checkout'"
         "alias gcl='git clone'"
