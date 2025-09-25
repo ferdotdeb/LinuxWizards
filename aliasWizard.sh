@@ -94,9 +94,9 @@ setup_aliases() {
         "alias grs='git reset --soft'"
         "alias grh='git reset --hard'"
         "alias gitrepair='sudo chown -R \"$(whoami)\":\"$(id -gn)\" .git'"
-        "alias rootcode='--no-sandbox --user-data-dir'"
         "# Miscellaneous"
         "alias h='history'"
+        "alias rootcode='--no-sandbox --user-data-dir'"
     )
     
     # Add each alias to the detected config file if it does not already exist
