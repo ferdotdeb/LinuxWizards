@@ -10,7 +10,7 @@ A collection of powerful Bash scripts to automate the setup and configuration of
 
 ## Prerequisites
 
-- A Debian-based Linux distribution (e.g., Debian, Ubuntu).
+- Debian or a Debian-based Linux distribution (e.g., Ubuntu, Linux Mint).
 - `sudo` or root privileges.
 - An active internet connection.
 
@@ -23,18 +23,36 @@ A collection of powerful Bash scripts to automate the setup and configuration of
     cd LinuxWizards
     ```
 
-2. **Grant execution permissions:**
+    **1.1. Or download the scripts individually:**
+
+    Use `curl` to download the scripts you need. Note that `common_functions.sh` is required by the other scripts.
 
     ```bash
-    chmod +x *.sh
+    curl -O https://raw.githubusercontent.com/ferdotdeb/LinuxWizards/main/softwareWizard.sh
+    ```
+
+    ```bash
+    curl -O https://raw.githubusercontent.com/ferdotdeb/LinuxWizards/main/gitWizard.sh
+    ```
+
+    ```bash
+    curl -O https://raw.githubusercontent.com/ferdotdeb/LinuxWizards/main/aliasWizard.sh
+    ```
+
+2. **Grant execution permissions:**
+
+    You need to make the scripts executable. You can do this with the following command:
+
+    ```bash
+    chmod +x scriptName.sh
     ```
 
 3. **Run the desired script:**
 
-    For example, to install the software:
+    Execute the script you need. In general, the command is:
 
     ```bash
-    ./softwareWizard.sh
+    ./scriptName.sh
     ```
 
 ## Scripts Breakdown
@@ -107,4 +125,4 @@ The `aliasWizard.sh` script will add the following aliases to your shell configu
 
 ## License
 
-This project is licensed under the terms of the MIT license. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the terms of the GNU General Public License. See the [LICENSE](LICENSE) file for details.
