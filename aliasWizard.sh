@@ -63,6 +63,7 @@ setup_aliases() {
         "alias ff='fastfetch'"
         "alias shutdown='systemctl poweroff'"
         "alias reboot='systemctl reboot'"
+        "alias srm='sudo rm -rf'"
         "# Docker shortcuts"
         "alias dc='docker'"
         "alias dcu='docker-compose up -d'"
