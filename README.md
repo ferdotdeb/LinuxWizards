@@ -28,6 +28,10 @@ A collection of powerful Bash scripts to automate the setup and configuration of
     Use `curl` to download the scripts you need. Note that `common_functions.sh` is required by the other scripts.
 
     ```bash
+    curl -O https://raw.githubusercontent.com/ferdotdeb/LinuxWizards/main/common_functions.sh
+    ```
+
+    ```bash
     curl -O https://raw.githubusercontent.com/ferdotdeb/LinuxWizards/main/softwareWizard.sh
     ```
 
@@ -67,7 +71,7 @@ This script streamlines your Git setup. It configures your global Git credential
 
 ### `aliasWizard.sh`
 
-This script enhances your terminal productivity by automatically detecting your shell (`bash` or `zsh`) and adding a curated set of useful aliases to your configuration file (`.bashrc` or `.zshrc`).
+This script enhances your terminal productivity by automatically setting up a comprehensive list of useful aliases. It creates or uses the existing `.bash_aliases` file in your home directory and populates it with carefully curated aliases to streamline common development tasks. The script checks for duplicate entries before adding new aliases, ensuring a clean configuration.
 
 ### `common_functions.sh`
 
@@ -86,6 +90,7 @@ The `aliasWizard.sh` script will add the following aliases to your shell configu
 | | `..` | `cd ..` | Go up one directory. |
 | | `...` | `cd ../..` | Go up two directories. |
 | | `....` | `cd ../../..` | Go up three directories. |
+| | `c` | `cd ~` | Quick shortcut to navigate to home directory. |
 | **APT Shortcuts** | `upg` | `sudo apt update && sudo apt upgrade -y` | Update package lists and upgrade all packages. |
 | | `aptin` | `sudo apt install` | Install a package. |
 | | `aptrm` | `sudo apt remove` | Remove a package. |
@@ -97,8 +102,15 @@ The `aliasWizard.sh` script will add the following aliases to your shell configu
 | | `ff` | `fastfetch` | Display system information quickly. |
 | | `shutdown`| `systemctl poweroff` | Shut down the system. |
 | | `reboot`| `systemctl reboot` | Reboot the system. |
+| | `srm` | `sudo rm -rf` | Force remove files/directories with elevated privileges. |
+| | `rm` | `rm -iv --preserve-root` | Remove files interactively with confirmation and root protection. |
+| | `cp` | `cp -iv` | Copy files interactively with confirmation and verbose output. |
+| | `mv` | `mv -iv` | Move/rename files interactively with confirmation and verbose output. |
+| | `ln` | `ln -iv` | Create links interactively with confirmation and verbose output. |
+| | `srczsh` | `source ~/.zshrc` | Reload Zsh configuration file. |
+| | `srcbash` | `source ~/.bashrc` | Reload Bash configuration file. |
 | **Docker** | `dc` | `docker` | Shortcut for the `docker` command. |
-| | `dcu` | `docker-compose up -d` | Start services in detached mode with Docker Compose. |
+| | `dcu` | `docker compose up -d` | Start services in detached mode with Docker Compose. |
 | | `dci` | `docker images` | List all Docker images. |
 | | `dcps` | `docker ps` | List all running containers. |
 | | `dcrm` | `docker rm` | Remove one or more containers. |
@@ -115,10 +127,15 @@ The `aliasWizard.sh` script will add the following aliases to your shell configu
 | | `gsw` | `git switch` | Switch branches. |
 | | `glg` | `git log` | Show commit logs. |
 | | `gb` | `git branch` | List, create, or delete branches. |
+| | `gbd` | `git branch -d` | Delete a branch safely (only if merged). |
+| | `gba` | `git branch -a` | List all branches (local and remote). |
+| | `gmg` | `git merge` | Merge branches together. |
 | | `gco` | `git checkout` | Switch branches or restore working tree files. |
 | | `gcl` | `git clone` | Clone a repository into a new directory. |
 | | `gdf` | `git diff` | Show changes between commits, commit and working tree, etc. |
 | | `gst` | `git stash` | Stash the changes in a dirty working directory away. |
+| | `grs` | `git reset --soft` | Reset HEAD to a previous commit, keeping changes staged. |
+| | `grh` | `git reset --hard` | Reset HEAD to a previous commit, discarding all changes. |
 | | `gitrepair` | `sudo chown -R "$(whoami)":"$(id -gn)" .git` | Fix ownership issues in the `.git` directory. |
 | **Miscellaneous**| `h` | `history` | Display command history. |
 | | `rootcode` | `--no-sandbox --user-data-dir` | Flags to run VS Code as root (use with caution). |
