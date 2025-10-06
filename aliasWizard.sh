@@ -15,29 +15,27 @@ welcome() {
 }
 
 # Function to detect the shell and define the configuration file
-detect_shell() {
-    echo "Detecting shell..."
-    sleep 2
+detect_alias_file() {
     echo "Current shell: $SHELL"
+    echo "Searching for .bash_aliases file..."
     sleep 2
+    
+    ALIAS_FILE="$HOME/.bash_aliases"
 
-    if [[ "$SHELL" == */bash ]]; then
-        config_file="$HOME/.bashrc"
-    elif [[ "$SHELL" == */zsh ]]; then
-        config_file="$HOME/.zshrc"
+    if [ -f "$ALIAS_FILE" ]; then
+        print_success "$ALIAS_FILE exists"
     else
-        print_error "Unsupported shell. Only Bash or Zsh is supported."
-        return 1
+        print_error "$ALIAS_FILE not found. Creating the file..."
+        touch "$ALIAS_FILE"
+        print_success "File $ALIAS_FILE created."
     fi
 
-    echo "Detected shell configuration file: $config_file"
     sleep 2
-
     return 0
 }
 
 setup_aliases() {
-    echo "Setting up aliases..."
+    echo "Applying alias to .bash_aliases file..."
     echo "You can see the list of all aliases documented in the README file"
     
     # List of aliases to add
@@ -50,6 +48,7 @@ setup_aliases() {
         "alias ..='cd ..'"
         "alias ...='cd ../..'"
         "alias ....='cd ../../..'"
+        "alias c='cd ~'"
         "# APT shortcuts"
         "alias upg='sudo apt update && sudo apt upgrade -y'"
         "alias aptin='sudo apt install'"
@@ -64,9 +63,15 @@ setup_aliases() {
         "alias shutdown='systemctl poweroff'"
         "alias reboot='systemctl reboot'"
         "alias srm='sudo rm -rf'"
+        "alias rm='rm -iv --preserve-root'"
+        "alias cp='cp -iv'"
+        "alias mv='mv -iv'"
+        "alias ln='ln -iv'"
+        "alias srczsh='source ~/.zshrc'"
+        "alias srcbash='source ~/.bashrc'"
         "# Docker shortcuts"
         "alias dc='docker'"
-        "alias dcu='docker-compose up -d'"
+        "alias dcu='docker compose up -d'"
         "alias dci='docker images'"
         "alias dcps='docker ps'"
         "alias dcrm='docker rm'"
@@ -102,23 +107,29 @@ setup_aliases() {
     
     # Add each alias to the detected config file if it does not already exist
     for alias_line in "${aliases[@]}"; do
-        if [[ -n "$alias_line" ]] && ! grep -qF "$alias_line" "$config_file"; then
-            echo "$alias_line" >> "$config_file"
+        if [[ -n "$alias_line" ]] && ! grep -qF "$alias_line" "$ALIAS_FILE"; then
+            echo "$alias_line" >> "$ALIAS_FILE"
         fi
     done
-    
+
+    return 0
+}
+
+finish_setup() {
     print_success "Aliases configured successfully!"
-    echo "Reloading $config_file to activate aliases..."
-    source "$config_file"  # Reload the detected config file to activate aliases immediately
+    echo "Reloading $ALIAS_FILE to activate aliases..."
+    source "$ALIAS_FILE"  # Reload the detected config file to activate aliases immediately
     print_success "Aliases activated successfully!"
+    echo "Setup complete! Please restart your terminal"
     return 0
 }
 
 # Main function to organize the script flow
 main() {
     welcome
-    detect_shell || return 1
+    detect_alias_file
     setup_aliases
+    finish_setup
     return 0
 }
 
