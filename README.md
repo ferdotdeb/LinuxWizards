@@ -90,7 +90,7 @@ The `aliasWizard.sh` script will add the following aliases to your shell configu
 | | `..` | `cd ..` | Go up one directory. |
 | | `...` | `cd ../..` | Go up two directories. |
 | | `....` | `cd ../../..` | Go up three directories. |
-| | `c` | `cd ~` | Quick shortcut to navigate to home directory. |
+| | `ch` | `cd ~` | Quick shortcut to navigate to home directory. |
 | **APT Shortcuts** | `upg` | `sudo apt update && sudo apt upgrade -y` | Update package lists and upgrade all packages. |
 | | `aptin` | `sudo apt install` | Install a package. |
 | | `aptrm` | `sudo apt remove` | Remove a package. |
@@ -109,6 +109,7 @@ The `aliasWizard.sh` script will add the following aliases to your shell configu
 | | `ln` | `ln -iv` | Create links interactively with confirmation and verbose output. |
 | | `srczsh` | `source ~/.zshrc` | Reload Zsh configuration file. |
 | | `srcbash` | `source ~/.bashrc` | Reload Bash configuration file. |
+| | `c` | `code .` | Open current directory in VS Code. |
 | **Docker** | `dc` | `docker` | Shortcut for the `docker` command. |
 | | `dcu` | `docker compose up -d` | Start services in detached mode with Docker Compose. |
 | | `dci` | `docker images` | List all Docker images. |
@@ -138,7 +139,7 @@ The `aliasWizard.sh` script will add the following aliases to your shell configu
 | | `grh` | `git reset --hard` | Reset HEAD to a previous commit, discarding all changes. |
 | | `gitrepair` | `sudo chown -R "$(whoami)":"$(id -gn)" .git` | Fix ownership issues in the `.git` directory. |
 | **Miscellaneous**| `h` | `history` | Display command history. |
-| | `rootcode` | `--no-sandbox --user-data-dir` | Flags to run VS Code as root (use with caution). |
+| | `rootrc` | `code .bashrc --no-sandbox --user-data-dir` | Open .bashrc in VS Code as root (use with caution). |
 
 ## License
 
