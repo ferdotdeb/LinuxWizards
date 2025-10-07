@@ -48,7 +48,7 @@ setup_aliases() {
         "alias ..='cd ..'"
         "alias ...='cd ../..'"
         "alias ....='cd ../../..'"
-        "alias c='cd ~'"
+        "alias ch='cd ~'"
         "# APT shortcuts"
         "alias upg='sudo apt update && sudo apt upgrade -y'"
         "alias aptin='sudo apt install'"
@@ -69,6 +69,7 @@ setup_aliases() {
         "alias ln='ln -iv'"
         "alias srczsh='source ~/.zshrc'"
         "alias srcbash='source ~/.bashrc'"
+        "alias c='code .'"
         "# Docker shortcuts"
         "alias dc='docker'"
         "alias dcu='docker compose up -d'"
@@ -102,7 +103,7 @@ setup_aliases() {
         "alias gitrepair='sudo chown -R \"$(whoami)\":\"$(id -gn)\" .git'"
         "# Miscellaneous"
         "alias h='history'"
-        "alias rootcode='--no-sandbox --user-data-dir'"
+        "alias rootrc='code .bashrc --no-sandbox --user-data-dir'"
     )
     
     # Add each alias to the detected config file if it does not already exist
