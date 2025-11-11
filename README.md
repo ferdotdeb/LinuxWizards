@@ -92,11 +92,11 @@ The `aliasWizard.sh` script will add the following aliases to your shell configu
 | | `....` | `cd ../../..` | Go up three directories. |
 | | `ch` | `cd ~` | Quick shortcut to navigate to home directory. |
 | **APT Shortcuts** | `upg` | `sudo apt update && sudo apt upgrade -y` | Update package lists and upgrade all packages. |
-| | `aptin` | `sudo apt install` | Install a package. |
-| | `aptrm` | `sudo apt remove` | Remove a package. |
-| | `autorm`| `sudo apt autoremove` | Remove automatically installed, unused packages. |
-| | `aptacl`| `sudo apt autoclean` | Clean the local repository of retrieved package files. |
-| | `aptcl` | `sudo apt clean` | Clear out the local repository of retrieved package files. |
+| | `install` | `sudo apt install` | Install a package. |
+| | `remove` | `sudo apt remove` | Remove a package. |
+| | `autoremove`| `sudo apt autoremove` | Remove automatically installed, unused packages. |
+| | `autoclean`| `sudo apt autoclean` | Clean the local repository of retrieved package files. |
+| | `aptclean` | `sudo apt clean` | Clear out the local repository of retrieved package files. |
 | **System** | `cls` | `clear` | Clear the terminal screen. |
 | | `python`| `python3` | Use `python3` as the default Python interpreter. |
 | | `ff` | `fastfetch` | Display system information quickly. |
@@ -116,17 +116,21 @@ The `aliasWizard.sh` script will add the following aliases to your shell configu
 | | `dcps` | `docker ps` | List all running containers. |
 | | `dcrm` | `docker rm` | Remove one or more containers. |
 | | `dcrmi` | `docker rmi` | Remove one or more images. |
+| | `dockerclean` | `docker system prune -a --volumes` | Remove all unused Docker objects, including volumes. |
 | **Kubernetes** | `kc` | `kubectl` | Shortcut for the `kubectl` command. |
 | | `mc` | `minikube` | Shortcut for the `minikube` command. |
 | | `kcgp` | `kubectl get pods` | Get all pods in the current namespace. |
 | | `kcgpw` | `kubectl get pods -o wide` | Get all pods with more details (IP, node). |
-| **Git** | `gs` | `git status` | Show the working tree status. |
-| | `ga` | `git add` | Add file contents to the index. |
+| **Git** | `ga` | `git add` | Add file contents to the index. |
 | | `gc` | `git commit -m` | Record changes to the repository with a message. |
 | | `gp` | `git push` | Update remote refs along with associated objects. |
 | | `gpl` | `git pull` | Fetch from and integrate with another repository. |
 | | `gsw` | `git switch` | Switch branches. |
 | | `glg` | `git log` | Show commit logs. |
+| | `gitgraph` | `git log --oneline --graph --decorate --all` | Display a decorated, graphical log of all branches. |
+| | `gitlast` | `git log -1 HEAD` | Show the last commit. |
+| | `gs` | `git status` | Show the working tree status. |
+| | `gss` | `git status -sb` | Show the working tree status in a short format. |
 | | `gb` | `git branch` | List, create, or delete branches. |
 | | `gbd` | `git branch -d` | Delete a branch safely (only if merged). |
 | | `gba` | `git branch -a` | List all branches (local and remote). |
@@ -137,9 +141,13 @@ The `aliasWizard.sh` script will add the following aliases to your shell configu
 | | `gst` | `git stash` | Stash the changes in a dirty working directory away. |
 | | `grs` | `git reset --soft` | Reset HEAD to a previous commit, keeping changes staged. |
 | | `grh` | `git reset --hard` | Reset HEAD to a previous commit, discarding all changes. |
+| | `gitundo` | `git reset --soft HEAD~1` | Undo the last commit, keeping changes staged. |
+| | `gitunstage` | `git reset HEAD --` | Unstage files from the index. |
 | | `gitrepair` | `sudo chown -R "$(whoami)":"$(id -gn)" .git` | Fix ownership issues in the `.git` directory. |
+| | `gitclean` | `git fetch --prune` | Remove remote-tracking branches that no longer exist on the remote. |
 | **Miscellaneous**| `h` | `history` | Display command history. |
 | | `rootrc` | `code .bashrc --no-sandbox --user-data-dir` | Open .bashrc in VS Code as root (use with caution). |
+| | `rootaliases` | `code .bash_aliases --no-sandbox --user-data-dir` | Open .bash_aliases in VS Code as root (use with caution). |
 
 ## License
 
