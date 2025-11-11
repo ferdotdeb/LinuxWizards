@@ -77,6 +77,7 @@ setup_aliases() {
         "alias dcps='docker ps'"
         "alias dcrm='docker rm'"
         "alias dcrmi='docker rmi'"
+        "alias dockerclean='docker system prune -a --volumes'
         "# Kubernetes shortcuts"
         "alias kc='kubectl'"
         "alias mc='minikube'"
@@ -110,6 +111,7 @@ setup_aliases() {
         "# Miscellaneous"
         "alias h='history'"
         "alias rootrc='code .bashrc --no-sandbox --user-data-dir'"
+        "alias rootaliases='code .bash_aliases --no-sandbox --user-data-dir'"
     )
     
     # Add each alias to the detected config file if it does not already exist
