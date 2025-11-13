@@ -1,99 +1,126 @@
-#!/bin/bash
+#!/bin/sh
 
-source ./common_functions.sh  # Ensure this path is correct
-
-# Global variables
-git_repo_name=""
+# Source common functions portably
+. ./common_functions.sh
 
 welcome() {
-    echo "                                                                                  ";
-    echo "██████╗ ███████╗██████╗  ██████╗     ██╗    ██╗██╗███████╗ █████╗ ██████╗ ██████╗ ";
-    echo "██╔══██╗██╔════╝██╔══██╗██╔═══██╗    ██║    ██║██║╚══███╔╝██╔══██╗██╔══██╗██╔══██╗";
-    echo "██████╔╝█████╗  ██████╔╝██║   ██║    ██║ █╗ ██║██║  ███╔╝ ███████║██████╔╝██║  ██║";
-    echo "██╔══██╗██╔══╝  ██╔═══╝ ██║   ██║    ██║███╗██║██║ ███╔╝  ██╔══██║██╔══██╗██║  ██║";
-    echo "██║  ██║███████╗██║     ╚██████╔╝    ╚███╔███╔╝██║███████╗██║  ██║██║  ██║██████╔╝";
-    echo "╚═╝  ╚═╝╚══════╝╚═╝      ╚═════╝      ╚══╝╚══╝ ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ";                                                                        
-    echo "                                                                                  ";
+    printf '%s\n' "                                                                                  "
+    printf '%s\n' "██████╗ ███████╗██████╗  ██████╗     ██╗    ██╗██╗███████╗ █████╗ ██████╗ ██████╗ "
+    printf '%s\n' "██╔══██╗██╔════╝██╔══██╗██╔═══██╗    ██║    ██║██║╚══███╔╝██╔══██╗██╔══██╗██╔══██╗"
+    printf '%s\n' "██████╔╝█████╗  ██████╔╝██║   ██║    ██║ █╗ ██║██║  ███╔╝ ███████║██████╔╝██║  ██║"
+    printf '%s\n' "██╔══██╗██╔══╝  ██╔═══╝ ██║   ██║    ██║███╗██║██║ ███╔╝  ██╔══██║██╔══██╗██║  ██║"
+    printf '%s\n' "██║  ██║███████╗██║     ╚██████╔╝    ╚███╔███╔╝██║███████╗██║  ██║██║  ██║██████╔╝"
+    printf '%s\n' "╚═╝  ╚═╝╚══════╝╚═╝      ╚═════╝      ╚══╝╚══╝ ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ "
+    printf '%s\n' "                                                                                  "
     sleep 5
 }
 
 test_git() {
-    echo "Checking if Git is installed..."
+    dots "Checking if Git is installed"
 
     if command_exists git; then
         print_success "Git is already installed"
-        echo "Git version:"
-        git --version
+        git_version=$(git --version 2>/dev/null | sed -n 's/.*version \([0-9][0-9.]*\).*/\1/p')
+        printf 'Git version: %s\n' "$git_version"
         sleep 3
         return 0
     else
-        print_warning "Git is not installed. Attempting to install..."
-        sudo apt update
-        sudo apt install git -y
+        print_warning "Git is not installed."
+        dots "Attempting to install Git"
+        sudo apt update && sudo apt install git -y
         
         # Verify if the installation was successful
         if command_exists git; then
-            print_success "Git has been installed successfully"
-            echo "Git version:"
-            git --version
+            print_success "Git has been installed successfully!"
+            git_version=$(git --version 2>/dev/null | sed -n 's/.*version \([0-9][0-9.]*\).*/\1/p')
+            printf 'Git version: %s\n' "$git_version"
             sleep 3
             return 0
         else
             print_error "Git could not be installed. Please install it manually and try again."
-            return 1
+            exit 0
         fi
     fi
 }
 
 # Obtaining user info
 new_repo() {
-    echo "Starting repository setup..."
-    
-    # Get Git username
-    echo -n "Enter the name of the repository you want to create:"
-    read git_repo_name
-    while [ -z "$git_repo_name" ]; do
-        print_error "The name cannot be empty"
-        echo -n "Enter the name of the repository you want to create:"
-        read git_repo_name
-    done
-    
-    # Get repository location
-    echo -n "Enter the location where you want to create the repository (default: current directory):"
-    read repo_location
-    if [ -z "$repo_location" ]; then
-        repo_location="."
+    # 1) Ask for the target directory, default to current
+    printf '%s' "Enter repo location, leave blank to use the actual directory: "
+    read -r repo_location
+    repo_location=${repo_location:-.}
+
+    # 2) Expand ~ in a portable way
+    case $repo_location in
+        \~/*) repo_location="$HOME/${repo_location#\~/}" ;;
+        \~)   repo_location="$HOME" ;;
+    esac
+
+    # 3) Exists but is not a directory
+    if [ -e "$repo_location" ] && [ ! -d "$repo_location" ]; then
+        print_error "Path exists but is not a directory: $repo_location"
+        return 1
     fi
-    
-    # Verify the location exists
+
+    # 4) Create if it does not exist
     if [ ! -d "$repo_location" ]; then
-        print_error "The location does not exist"
-        echo -n "Do you want to create it? (y/n):"
-        read create_dir
-        if [[ "$create_dir" == "y" || "$create_dir" == "Y" ]]; then
-            mkdir -p "$repo_location"
-            print_success "Location created successfully"
-        else
-            print_error "Cannot proceed without a valid location"
-            return 1
-        fi
+        printf '%s' "Directory does not exist. Create it? [y/N]"
+        read -r ans
+        case $ans in
+        [Yy]*)
+            if ! mkdir -p -- "$repo_location"; then
+                print_error "Failed to create: $repo_location"
+                return 1
+            fi
+            print_success "Location created: $repo_location"
+            ;;
+        *)  print_error "Cannot proceed without a valid location"; exit 0 ;;
+        esac
     fi
-}   
+
+    # 5) Write permissions
+    if [ ! -w "$repo_location" ]; then
+        print_error "No write permission on: $repo_location"
+        exit 0
+    fi
+    
+    print_success "Using: $repo_location"
+
+    cd "$repo_location" || { print_error "Failed to change directory to: $repo_location"; exit 0; }
+}
+
+setting_repo() {
+    dots "Setting up the repository"
+    git init .
+    
+    # Create .gitignore
+    printf '%s\n' '.env' '.venv/' 'node_modules/' '*.log' '*.tmp' '.DS_Store' >> .gitignore
+    
+    # Create project files
+    touch README.md LICENSE .env .env.example Dockerfile .dockerignore
+    
+    # Add initial content
+    printf '%s\n' "# New Project" >> README.md
+    printf '%s\n' "No license defined for this project yet." >> LICENSE
+    
+    # Git operations
+    git add .
+    git commit -m "🎉 Project created!"
+    printf '%s\n' "Git status:"
+    git status
+    git switch -c dev
+    print_success "Branch 'dev' created and switched to it."
+    print_success "Repository created with repoWizard.sh"
+}
 
 # Main execution
 main() {
     welcome
-
-    if ! test_git; then
-        print_error "Cannot proceed without Git. The program will exit."
-        exit 1
-    fi
-    
+    test_git
     new_repo
+    setting_repo
     return 0
 }
 
-# Run main if script is executed directly
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    main
-fi
+# Run main
+main
