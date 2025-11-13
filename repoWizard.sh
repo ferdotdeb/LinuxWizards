@@ -21,7 +21,7 @@ test_git() {
     if command_exists git; then
         print_success "Git is already installed"
         git_version=$(git --version 2>/dev/null | sed -n 's/.*version \([0-9][0-9.]*\).*/\1/p')
-        printf 'Git version: %s\n' "$git_version"
+        printf '%s\n' "Git version: $git_version"
         sleep 3
         return 0
     else
@@ -33,7 +33,7 @@ test_git() {
         if command_exists git; then
             print_success "Git has been installed successfully!"
             git_version=$(git --version 2>/dev/null | sed -n 's/.*version \([0-9][0-9.]*\).*/\1/p')
-            printf 'Git version: %s\n' "$git_version"
+            printf '%s\n' "Git version: $git_version"
             sleep 3
             return 0
         else
