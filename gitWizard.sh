@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 
-source ./common_functions.sh  # Ensure this path is correct
+. ./common_functions.sh  # Ensure this path is correct
 
 # Global variables
 git_username=""
@@ -8,50 +8,51 @@ git_email=""
 ssh_password=""
 
 welcome() {
-    echo "                                                                      ";
-    echo " ██████╗ ██╗████████╗    ██╗    ██╗██╗███████╗ █████╗ ██████╗ ██████╗ ";
-    echo "██╔════╝ ██║╚══██╔══╝    ██║    ██║██║╚══███╔╝██╔══██╗██╔══██╗██╔══██╗";
-    echo "██║  ███╗██║   ██║       ██║ █╗ ██║██║  ███╔╝ ███████║██████╔╝██║  ██║";
-    echo "██║   ██║██║   ██║       ██║███╗██║██║ ███╔╝  ██╔══██║██╔══██╗██║  ██║";
-    echo "╚██████╔╝██║   ██║       ╚███╔███╔╝██║███████╗██║  ██║██║  ██║██████╔╝";
-    echo " ╚═════╝ ╚═╝   ╚═╝        ╚══╝╚══╝ ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ";
-    echo "                                                                      ";
+    printf '%s\n' "                                                                      "
+    printf '%s\n' " ██████╗ ██╗████████╗    ██╗    ██╗██╗███████╗ █████╗ ██████╗ ██████╗ "
+    printf '%s\n' "██╔════╝ ██║╚══██╔══╝    ██║    ██║██║╚══███╔╝██╔══██╗██╔══██╗██╔══██╗"
+    printf '%s\n' "██║  ███╗██║   ██║       ██║ █╗ ██║██║  ███╔╝ ███████║██████╔╝██║  ██║"
+    printf '%s\n' "██║   ██║██║   ██║       ██║███╗██║██║ ███╔╝  ██╔══██║██╔══██╗██║  ██║"
+    printf '%s\n' "╚██████╔╝██║   ██║       ╚███╔███╔╝██║███████╗██║  ██║██║  ██║██████╔╝"
+    printf '%s\n' " ╚═════╝ ╚═╝   ╚═╝        ╚══╝╚══╝ ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ "
+    printf '%s\n' "                                                                      "
     sleep 5
 }
 
 test_git() {
-    echo "Checking if Git is installed..."
+    dots "Checking if Git is installed"
 
     if command_exists git; then
         print_success "Git is already installed"
-        echo "Git version:"
-        git --version
+        git_version=$(git --version 2>/dev/null | sed -n 's/.*version \([0-9][0-9.]*\).*/\1/p')
+        printf '%s\n' "Git version: $git_version"
         sleep 3
         return 0
     else
-        print_warning "Git is not installed. Attempting to install..."
-        sudo apt update
-        sudo apt install git -y
+        print_warning "Git is not installed."
+        dots "Attempting to install Git"
+        sudo apt update && sudo apt install git -y
         
         # Verify if the installation was successful
         if command_exists git; then
-            print_success "Git has been installed successfully"
-            echo "Git version:"
-            git --version
+            print_success "Git has been installed successfully!"
+            git_version=$(git --version 2>/dev/null | sed -n 's/.*version \([0-9][0-9.]*\).*/\1/p')
+            printf '%s\n' "Git version: $git_version"
             sleep 3
             return 0
         else
             print_error "Git could not be installed. Please install it manually and try again."
-            return 1
+            exit 0
         fi
     fi
 }
 
 # Regex for email validation function
 validate_email() {
-    local email=$1
+    local email="$1"
     local regex="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-    if [[ $email =~ $regex ]]; then
+    # Use grep for POSIX-compliant regex matching
+    if printf '%s\n' "$email" | grep -qE "$regex"; then
         return 0
     else
         return 1
@@ -60,36 +61,40 @@ validate_email() {
 
 # Obtaining user info
 collect_user_info() {
-    echo "Please enter your personal information for Git configuration"
+    printf '%s\n' "Please enter your personal information for Git configuration"
     
     # Get Git username
-    echo -n "Enter your full name for Git installation: "
-    read git_username
+    printf '%s' "Enter your full name for Git installation: "
+    read -r git_username
     while [ -z "$git_username" ]; do
         print_error "The name cannot be empty"
-        echo -n "Enter your full name for Git installation: "
-        read git_username
+        printf '%s' "Enter your full name for Git installation: "
+        read -r git_username
     done
     
     # Get Git email with validation
-    echo -n "Enter your email for Git installation: "
-    read git_email
+    printf '%s' "Enter your email for Git installation: "
+    read -r git_email
     while ! validate_email "$git_email"; do
         print_error "Please enter a valid email address"
-        echo -n "Enter your email for Git installation: "
-        read git_email
+        printf '%s' "Enter your email for Git installation: "
+        read -r git_email
     done
     
-    # Get SSH password
-    echo -n "Enter your password for SSH key generation: "
-    read -s ssh_password # Flag -s for silent input
-    echo # New line after silent input
+    # Get SSH password with stty for portability
+    printf '%s' "Enter your password for SSH key generation: "
+    stty -echo
+    read -r ssh_password
+    stty echo
+    printf '\n'
     
     while [ -z "$ssh_password" ]; do
         print_error "Password cannot be empty"
-        echo -n "Enter your password for SSH key generation: "
-        read -s ssh_password
-        echo
+        printf '%s' "Enter your password for SSH key generation: "
+        stty -echo
+        read -r ssh_password
+        stty echo
+        printf '\n'
     done
 
     print_success "Git user information collected successfully!"
@@ -99,8 +104,7 @@ collect_user_info() {
 
 # Setting git global configs
 set_git_global_configs() {
-    echo "Setting Git global configurations..."
-    sleep 3
+    dots "Setting Git global configurations"
     git config --global init.defaultBranch main
     git config --global user.name "$git_username"
     git config --global user.email "$git_email"
@@ -115,54 +119,55 @@ set_git_global_configs() {
     git config --global commit.gpgsign true
     git config --global tag.gpgSign true
 
-    echo "Git global configurations:"
-    echo "Name: $git_username"
-    echo "Email: $git_email"
-    echo "Default branch:"
-    print_success "main"
-    print_success "Pull strategy: merge (no rebase)"
-    print_success "Push auto-setup: enabled"
-    print_success "Fetch prune: enabled"
-    print_success "Default editor: nano"
-    echo "GPG commit signing:"
-    print_success "enabled"
-
-    sleep 3
+    printf '%s\n' "Git global configurations:"
+    printf "Name: %s\n" "$git_username"
+    printf "Email: %s\n" "$git_email"
+    printf '%s\n' "Default branch: main"
+    printf '%s\n' "Pull strategy: merge (no rebase)"
+    print_success "Push auto-setup enabled"
+    print_success "Fetch prune enabled"
+    printf '%s\n' "Default editor: nano"
+    print_success "GPG commit signing enabled with SSH key"
 
     print_success "Git global configurations set successfully!"
+    sleep 3
     return 0
 }
 
 # Creating SSH Keys
 create_ssh_key() {
-    echo "Setting up SSH key..."
+    dots "Setting up SSH key"
 
     # Creating SSH key
     ssh-keygen -t ed25519 -C "$git_email" -f ~/.ssh/id_ed25519 -N "$ssh_password" -q
     print_success "SSH key created successfully!"
     
     # Set proper permissions for SSH keys
-    echo "Setting permissions for SSH keys..."
+    dots "Setting permissions for SSH keys"
     chmod 600 ~/.ssh/id_ed25519
     chmod 644 ~/.ssh/id_ed25519.pub
     print_success "SSH key permissions set successfully!"
 
-    echo "Starting SSH agent..."
-    eval "$(ssh-agent -s)"
+    dots "Starting SSH agent"
+    # Start SSH agent and source its environment
+    ssh_agent_output="$(ssh-agent -s)"
+    eval "$ssh_agent_output" >/dev/null 2>&1
     print_success "SSH agent started successfully!"
 
     print_warning "In 10 seconds you will need to enter your SSH key passphrase"
     sleep 10
-    echo "Please enter your SSH key passphrase (if any):"
+    printf '%s\n' "Please enter your SSH key passphrase (if any):"
+
+    dots "Adding SSH key to the SSH agent"
 
     ssh-add ~/.ssh/id_ed25519
 
     print_success "SSH key added to the SSH agent successfully!"
 
-    echo "Saving your public key to public_key.txt..."
+    dots "Saving your public key to public_key.txt file"
     cat ~/.ssh/id_ed25519.pub > public_key.txt
 
-    echo "Your SSH public key (add this to GitHub/GitLab):"
+    printf '%s\n' "This is your SSH public key (add this to GitHub/GitLab):"
     cat ~/.ssh/id_ed25519.pub
 
     print_success "SSH key created and added to the SSH agent successfully!"
@@ -172,19 +177,12 @@ create_ssh_key() {
 # Main execution
 main() {
     welcome
-
-    if ! test_git; then
-        print_error "Cannot proceed without Git. The program will exit."
-        exit 1
-    fi
-    
+    test_git
     collect_user_info
     set_git_global_configs
     create_ssh_key
     return 0
 }
 
-# Run main if script is executed directly
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    main
-fi
+# Run main
+main
