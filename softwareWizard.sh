@@ -14,23 +14,31 @@ welcome() {
   sleep 5
 }
 
-install_apt_packages() {
-  # Packages to install
-  PKGS=(vim vlc git fastfetch openssh-client solaar curl wget)
-
+obtaining_privileges() {
   # If not root, re-execute with sudo
   if [ "$(id -u)" -ne 0 ]; then
     exec sudo -E bash "$0" "$@"
   fi
+}
 
-  apt-get update
-  apt-get install -y "${PKGS[@]}"
+updating_system() {
+  dots "Updating system packages..."
+  sudo apt-get update && sudo apt-get upgrade -y
+  print_success "System packages updated!"
+  return 0
+}
 
-  print_success "Installed packages: ${PKGS[*]}"
+install_packages() {
+  dots "Installing essential APT packages"
+  sudo apt-get install -y --no-install-recommends vim neovim vlc git fastfetch openssh-client solaar curl wget
+  sudo apt-get clean
+
+  print_success "Installed packages!"
+  return 0
 }
 
 install_google_chrome() {
-    echo "Installing Google Chrome..."
+    dots "Installing Google Chrome"
     
     # Check if Chrome is already installed
     if command_exists google-chrome; then
@@ -63,7 +71,7 @@ install_google_chrome() {
 }
 
 install_vscode() {
-    echo "Installing Visual Studio Code..."
+    dots "Installing Visual Studio Code"
     
     # Check if VS Code is already installed
     if command_exists code; then
@@ -96,15 +104,14 @@ install_vscode() {
 }
 
 install_uv() {
-    echo "Installing UV for Python..."
-    echo "Downloading UV setup script..."
+    dots "Downloading and installing UV for Python"
     
     if ! curl -LsSf https://astral.sh/uv/install.sh | sh; then
       print_error "Failed to install UV"
       return 1
     fi
     
-    echo "Restarting shell..."
+    dots "Restarting shell"
     
     if [ -f "$HOME/.local/bin/env" ]; then
       source "$HOME/.local/bin/env"
@@ -117,7 +124,7 @@ install_uv() {
 }
 
 install_docker() {
-  echo "Installing Docker..."
+  dots "Checking if Docker is already installed"
     
   # Check if Docker is already installed
   if command_exists docker; then
@@ -132,7 +139,7 @@ install_docker() {
     
   # Install Docker based on distribution
   if [[ "$ID" == "debian" ]] || [[ "$ID_LIKE" =~ debian ]]; then
-    echo "Installing Docker for Debian-based system..."
+    dots "Installing Docker for $ID"
     
     # Add Docker's official GPG key:
 
@@ -155,7 +162,7 @@ install_docker() {
     print_success "Docker installed successfully for Debian!"
         
   elif [[ "$ID" == "ubuntu" ]]; then
-    echo "Installing Docker for Ubuntu..."
+    dots "Installing Docker for $ID"
 
     # Add Docker's official GPG key:
 
@@ -180,6 +187,7 @@ install_docker() {
         
   else
     print_error "Docker installation not supported for this distribution: $ID"
+    print_error "Debian and Ubuntu are only supported."
     return 1
   fi
     
@@ -190,10 +198,11 @@ install_docker() {
     print_success "Docker installation completed successfully!"
         
     # Add current user to docker group (optional)
-    echo "Adding current user to docker group for non-root access..."
+    dots "Adding current user to docker group for access without root permissions"
 
     if sudo usermod -aG docker "$USER"; then
-      print_success "User added to docker group. Please log out and back in for changes to take effect."
+      print_success "User added to docker group."
+      printf '%s\n' "When the script finishes, reopen the terminal for changes to take effect."
     else
       print_warning "Failed to add user to docker group"
     fi
@@ -209,7 +218,9 @@ install_docker() {
 # Main execution
 main() {
   welcome
-  install_apt_packages
+  obtaining_privileges
+  updating_system
+  install_packages
   install_google_chrome
   install_vscode
   install_uv
@@ -217,7 +228,5 @@ main() {
   return 0
 }
 
-# Run main if script is executed directly
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-  main
-fi
+# Run main
+main
