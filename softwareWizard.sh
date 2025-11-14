@@ -19,6 +19,7 @@ obtaining_privileges() {
   if [ "$(id -u)" -ne 0 ]; then
     exec sudo -E bash "$0" "$@"
   fi
+  return 0
 }
 
 updating_system() {
@@ -32,7 +33,6 @@ install_packages() {
   dots "Installing essential APT packages"
   sudo apt-get install -y --no-install-recommends vim neovim vlc git fastfetch openssh-client solaar curl wget
   sudo apt-get clean
-
   print_success "Installed packages!"
   return 0
 }
