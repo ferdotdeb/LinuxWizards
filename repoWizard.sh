@@ -25,21 +25,9 @@ test_git() {
         sleep 3
         return 0
     else
-        print_warning "Git is not installed."
-        dots "Attempting to install Git"
-        sudo apt update && sudo apt install git -y
-        
-        # Verify if the installation was successful
-        if command_exists git; then
-            print_success "Git has been installed successfully!"
-            git_version=$(git --version 2>/dev/null | sed -n 's/.*version \([0-9][0-9.]*\).*/\1/p')
-            printf '%s\n' "Git version: $git_version"
-            sleep 3
-            return 0
-        else
-            print_error "Git could not be installed. Please install it manually and try again."
-            exit 0
-        fi
+        print_error "Git is not installed."
+        printf '%s\n' "Please install Git manually before running this script."
+        exit 1
     fi
 }
 
