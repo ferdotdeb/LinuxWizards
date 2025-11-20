@@ -80,14 +80,26 @@ new_repo() {
 setting_repo() {
     dots "Setting up the repository"
     git init .
+
+    # Create directories
+    mkdir -p docker/dev docker/prod .devcontainer .vscode
+
+    # Create devcontainer files
+    touch -- .devcontainer/devcontainer.json .devcontainer/docker-compose.yml
+
+    # Create docker files
+    touch docker/dev/Dockerfile docker/dev/docker-compose.yml  docker/prod/Dockerfile docker/prod/docker-compose.yml
+    
+    # Create project files
+    touch README.md LICENSE .env .env.example .gitignore .dockerignore 
     
     # Create .gitignore
     printf '%s\n' '.env' '.venv/' 'node_modules/' '*.log' '*.tmp' '.DS_Store' >> .gitignore
+
+    # Create .dockerignore
+    printf '%s\n' '.git/' '.gitignore' '.gitattributes' '.devcontainer/' '.vscode/' '.venv/' 'node_modules/' '.env' '.env.example' '*.log' '*.tmp' '.DS_Store' README.md LICENSE >> .dockerignore
     
-    # Create project files
-    touch README.md LICENSE .env .env.example Dockerfile .dockerignore
-    
-    # Add initial content
+    # Add README and LICENSE content
     printf '%s\n' "# New Project" >> README.md
     printf '%s\n' "No license defined for this project yet." >> LICENSE
     
