@@ -115,7 +115,7 @@ alias grh='git reset --hard'
 alias gitundo='git reset --soft HEAD~1'
 alias gitunstage='git reset HEAD --'
 alias gitrepair='sudo chown -R "$(whoami)":"$(id -gn)" .git'
-alias gitclean='git fetch --prune'
+alias gitclean='git fetch origin --prune'
 # Miscellaneous
 alias h='history'
 alias rootrc='code .bashrc --no-sandbox --user-data-dir'
