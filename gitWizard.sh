@@ -98,7 +98,6 @@ set_git_global_configs() {
     git config --global user.email "$git_email"
     git config --global pull.rebase false
     git config --global push.autoSetupRemote true
-    git config --global fetch.prune true
     git config --global core.editor "nano"
 
     # Signing (optional, if you use SSH and Git >= 2.34)
@@ -113,7 +112,6 @@ set_git_global_configs() {
     printf '%s\n' "Default branch: main"
     printf '%s\n' "Pull strategy: merge (no rebase)"
     print_success "Push auto-setup enabled"
-    print_success "Fetch prune enabled"
     printf '%s\n' "Default editor: nano"
     print_success "GPG commit signing enabled with SSH key"
 
