@@ -15,12 +15,49 @@ welcome() {
     sleep 5
 }
 
-# Function to detect the shell and define the configuration file
+ALIAS_SOURCE_BLOCK='if [ -f ~/.aliases ]; then
+    . ~/.aliases
+fi'
+
+detect_shell() {
+    dots "Searching for current shell"
+    printf '%s\n' "Your current shell is ${SHELL##*/}"
+}
+
+config_source() {
+    dots "Adding alias search to the configuration file of your shell"
+
+    if echo "$SHELL" | grep -q "bash"; then
+        print_success "bash shell detected."
+        RC_FILE="$HOME/.bashrc"
+    elif echo "$SHELL" | grep -q "zsh"; then
+        print_success "zsh shell detected."
+        RC_FILE="$HOME/.zshrc"
+    else
+        print_error "The $SHELL shell is unsupported"
+        printf '%s\n' "This script currently supports only bash and zsh shells."
+        exit 1
+    fi
+
+    # Check if the alias source block already exists in RC_FILE
+    if grep -qF "if [ -f ~/.aliases ]; then" "$RC_FILE" 2>/dev/null; then
+        print_success "Alias source block already exists in $RC_FILE file"
+    else
+        dots "Adding alias source block to $RC_FILE file"
+        # Append the ALIAS_SOURCE_BLOCK to the RC_FILE
+        printf '\n%s\n' "$ALIAS_SOURCE_BLOCK" >> "$RC_FILE" || {
+            print_error "Failed to add alias source block to $RC_FILE file"
+            exit 1
+        }
+        print_success "Alias source block added to $RC_FILE file successfully!"
+    fi
+
+    return 0
+}
+
 detect_alias_file() {
-    printf '%s\n' "Current shell: $SHELL"
-    dots "Searching for .bash_aliases file"
     
-    ALIAS_FILE="$HOME/.bash_aliases"
+    ALIAS_FILE="$HOME/.aliases"
 
     if [ -f "$ALIAS_FILE" ]; then
         print_success "$ALIAS_FILE exists"
@@ -34,7 +71,7 @@ detect_alias_file() {
 }
 
 setup_aliases() {
-    dots "Applying alias to .bash_aliases file"
+    dots "Applying alias to .aliases file"
     printf '%s\n' "You can see the list of all aliases documented in the README file"
     
     # Add each alias to the detected config file if it does not already exist
@@ -137,6 +174,8 @@ finish_setup() {
 # Main function to organize the script flow
 main() {
     welcome
+    detect_shell
+    config_source
     detect_alias_file
     setup_aliases
     finish_setup
