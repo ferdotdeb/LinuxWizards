@@ -73,7 +73,7 @@ This is a utility script and should not be executed directly. It provides shared
 
 ### `softwareWizard.sh`
 
-This script automates the installation of essential software for developers. It handles `apt` packages and third-party applications like Google Chrome, Visual Studio Code, and Docker.
+This script automates the installation of essential software for developers. It handles `apt` packages (vim, neovim, vlc, git, fastfetch, openssh-client, solaar, curl, wget) and third-party applications like Google Chrome and Visual Studio Code.
 
 ### `gitWizard.sh`
 
@@ -81,11 +81,11 @@ This script streamlines your Git setup. It configures your global Git credential
 
 ### `aliasWizard.sh`
 
-This script enhances your terminal productivity by automatically setting up a comprehensive list of useful aliases. It creates or uses the existing `.bash_aliases` file in your home directory and populates it with carefully curated aliases to streamline common development tasks. The script checks for duplicate entries before adding new aliases, ensuring a clean configuration. The script is designed to be fully POSIX-compliant, ensuring it runs on any standard Linux distribution or macOS without modification.
+This script enhances your terminal productivity by automatically setting up a comprehensive list of useful aliases. It creates or uses the existing `.aliases` file in your home directory and populates it with carefully curated aliases to streamline common development tasks. It supports both `bash` and `zsh` shells. The script checks for duplicate entries before adding new aliases, ensuring a clean configuration.
 
 ### `repoWizard.sh`
 
-This script automates the process of creating a new Git repository. It initializes a repository in the specified directory, creates a standard `.gitignore` file with common entries (like `.env`, `node_modules/`, and `*.log`), and sets up a basic project structure. The script is designed to be fully POSIX-compliant, ensuring it runs on any standard Linux distribution or macOS without modification.
+This script automates the process of creating a new Git repository. It initializes a repository in the specified directory, creates a standard `.gitignore` and `.dockerignore` file, and sets up a basic project structure including `docker/dev`, `docker/prod`, `.devcontainer`, and `.vscode` directories with initial configuration files. The script is designed to be fully POSIX-compliant.
 
 ## Alias Reference
 
@@ -93,28 +93,39 @@ The `aliasWizard.sh` script will add the following aliases to your shell configu
 
 | Category | Alias | Original Command | Description |
 | :--- | :--- | :--- | :--- |
-| **Navigation** |
-| | `sls` | `ls -lavh` | List files with detailed, human-readable sizes. |
+| **Navigation** ||||
+| | `ls` | `ls --color=auto` | List files with colors. |
 | | `ll` | `ls -la` | List all files (including hidden) in long format. |
 | | `la` | `ls -A` | List all files, including hidden, except for `.` and `..`. |
-| | `l` | `ls -CF` | List files in columns, marking types (e.g., `/` for directories). |
+| | `l` | `ls -CF` | List files in columns, marking types. |
+| | `lf` | `ls -alF` | List all files in long format with type indicators. |
+| | `lh` | `ls -laFh` | List all files in long format with human-readable sizes. |
+| | `sls` | `ls -lavh` | List files with detailed, human-readable sizes. |
 | | `..` | `cd ..` | Go up one directory. |
 | | `...` | `cd ../..` | Go up two directories. |
 | | `....` | `cd ../../..` | Go up three directories. |
 | | `ch` | `cd ~` | Quick shortcut to navigate to home directory. |
-| **APT Shortcuts** |
-|| `upg` | `sudo apt update && sudo apt upgrade -y` | Update package lists and upgrade all packages. |
+| | `dir` | `dir --color=auto` | List directory contents with colors. |
+| | `vdir` | `vdir --color=auto` | List directory contents verbosely with colors. |
+| | `grep` | `grep --color=auto` | Search text with colored output. |
+| | `fgrep` | `fgrep --color=auto` | Search fixed strings with colored output. |
+| | `egrep` | `egrep --color=auto` | Search extended regex with colored output. |
+| **APT Shortcuts** ||||
+| | `upg` | `sudo apt update && sudo apt upgrade -y` | Update package lists and upgrade all packages. |
 | | `install` | `sudo apt install` | Install a package. |
 | | `remove` | `sudo apt remove` | Remove a package. |
-| | `autoremove`| `sudo apt autoremove` | Remove automatically installed, unused packages. |
-| | `autoclean`| `sudo apt autoclean` | Clean the local repository of retrieved package files. |
-| | `aptclean` | `sudo apt clean` | Clear out the local repository of retrieved package files. |
-| **System** |
-|| `cls` | `clear` | Clear the terminal screen. |
-| | `python`| `python3` | Use `python3` as the default Python interpreter. |
+| | `clean` | `sudo apt autoremove && sudo apt autoclean && sudo apt clean` | Clean up unused packages and cache. |
+| **System Shortcuts** ||||
+| | `cls` | `clear` | Clear the terminal screen. |
+| | `python` | `python3` | Use `python3` as the default Python interpreter. |
 | | `ff` | `fastfetch` | Display system information quickly. |
-| | `shutdown`| `systemctl poweroff` | Shut down the system. |
-| | `reboot`| `systemctl reboot` | Reboot the system. |
+| | `shutdown` | `systemctl poweroff` | Shut down the system. |
+| | `reboot` | `systemctl reboot` | Reboot the system. |
+| | `rerun` | `sudo !!` | Rerun the last command with sudo. |
+| | `status` | `sudo systemctl status` | Check the status of a service. |
+| | `start` | `sudo systemctl start` | Start a service. |
+| | `stop` | `sudo systemctl stop` | Stop a service. |
+| | `restart` | `sudo systemctl restart` | Restart a service. |
 | | `srm` | `sudo rm -rf` | Force remove files/directories with elevated privileges. |
 | | `rm` | `rm -iv --preserve-root` | Remove files interactively with confirmation and root protection. |
 | | `cp` | `cp -iv` | Copy files interactively with confirmation and verbose output. |
@@ -123,26 +134,28 @@ The `aliasWizard.sh` script will add the following aliases to your shell configu
 | | `srczsh` | `source ~/.zshrc` | Reload Zsh configuration file. |
 | | `srcbash` | `source ~/.bashrc` | Reload Bash configuration file. |
 | | `c` | `code .` | Open current directory in VS Code. |
-| **Docker** |
-|| `dc` | `docker` | Shortcut for the `docker` command. |
+| | `code` | `code .` | Open current directory in VS Code. |
+| | `cursor` | `cursor .` | Open current directory in Cursor. |
+| **Docker Shortcuts** ||||
+| | `dc` | `docker` | Shortcut for the `docker` command. |
 | | `dcu` | `docker compose up -d` | Start services in detached mode with Docker Compose. |
 | | `dci` | `docker images` | List all Docker images. |
 | | `dcps` | `docker ps` | List all running containers. |
 | | `dcrm` | `docker rm` | Remove one or more containers. |
 | | `dcrmi` | `docker rmi` | Remove one or more images. |
 | | `dockerclean` | `docker system prune -a --volumes` | Remove all unused Docker objects, including volumes. |
-| **Kubernetes** |
-|| `kc` | `kubectl` | Shortcut for the `kubectl` command. |
+| **Kubernetes Shortcuts** ||||
+| | `kc` | `kubectl` | Shortcut for the `kubectl` command. |
 | | `mc` | `minikube` | Shortcut for the `minikube` command. |
 | | `kcgp` | `kubectl get pods` | Get all pods in the current namespace. |
 | | `kcgpw` | `kubectl get pods -o wide` | Get all pods with more details (IP, node). |
-| **Git** |
-|| `gi` | `git init .` | Initialize a new Git repository in the current directory. |
-|| `ga` | `git add` | Add file contents to the index. |
+| **Git Shortcuts** ||||
+| | `gi` | `git init .` | Initialize a new Git repository in the current directory. |
+| | `ga` | `git add` | Add file contents to the index. |
 | | `gc` | `git commit -m` | Record changes to the repository with a message. |
+| | `gp` | `git push` | Update remote refs along with associated objects. |
 | | `autocommit` | `read -p "Commit message: " msg && git add . && git commit -m "$msg"` | Add all files and commit with a custom message. |
 | | `autopush` | `read -p "Commit message: " msg && git add . && git commit -m "$msg" && git push` | Add, commit, and push with a single command. |
-| | `gp` | `git push` | Update remote refs along with associated objects. |
 | | `gpl` | `git pull` | Fetch from and integrate with another repository. |
 | | `gsw` | `git switch` | Switch branches. |
 | | `gsc` | `git switch -c` | Create and switch to a new branch. |
@@ -164,11 +177,12 @@ The `aliasWizard.sh` script will add the following aliases to your shell configu
 | | `gitundo` | `git reset --soft HEAD~1` | Undo the last commit, keeping changes staged. |
 | | `gitunstage` | `git reset HEAD --` | Unstage files from the index. |
 | | `gitrepair` | `sudo chown -R "$(whoami)":"$(id -gn)" .git` | Fix ownership issues in the `.git` directory. |
-| | `gitclean` | `git fetch --prune` | Remove remote-tracking branches that no longer exist on the remote. |
-| **Miscellaneous** |
+| | `gitclean` | `git fetch origin --prune` | Remove remote-tracking branches that no longer exist on the remote. |
+| **Miscellaneous** ||||
 | | `h` | `history` | Display command history. |
 | | `rootrc` | `code .bashrc --no-sandbox --user-data-dir` | Open .bashrc in VS Code as root (use with caution). |
-| | `rootaliases` | `code .bash_aliases --no-sandbox --user-data-dir` | Open .bash_aliases in VS Code as root (use with caution). |
+| | `rootzrc` | `code .zshrc --no-sandbox --user-data-dir` | Open .zshrc in VS Code as root (use with caution). |
+| | `rootaliases` | `code .aliases --no-sandbox --user-data-dir` | Open .aliases in VS Code as root (use with caution). |
 
 ## License
 
