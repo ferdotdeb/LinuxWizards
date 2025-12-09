@@ -192,11 +192,11 @@ run() {
   shift
   "$cmd" "$@"
 }
-
+# Make files executable more easily
 mkrun() {
     if [ "$#" -eq 0 ]; then
         printf '%s\n' "You must provide at least one argument."
-        printf '%s\n' "Example: exec script.sh"
+        printf '%s\n' "Example: mkrun script.sh"
         return 1
     fi
 
@@ -213,7 +213,7 @@ mkrun() {
         esac
         chmod +x "$target"
     done
-}
+} # End of alias definitions
 EOF
 
     return 0
