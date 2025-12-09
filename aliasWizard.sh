@@ -20,12 +20,12 @@ ALIAS_SOURCE_BLOCK='if [ -f ~/.aliases ]; then
 fi'
 
 detect_shell() {
-    dots "Searching for current shell"
+    dots "Searching for your current shell"
     printf '%s\n' "Your current shell is ${SHELL##*/}"
 }
 
 config_source() {
-    dots "Adding alias search to the configuration file of your shell"
+    dots "Adding alias search to the configuration file of your ${SHELL##*/} shell"
 
     if echo "$SHELL" | grep -q "bash"; then
         print_success "bash shell detected."
@@ -56,7 +56,6 @@ config_source() {
 }
 
 detect_alias_file() {
-    
     ALIAS_FILE="$HOME/.aliases"
 
     if [ -f "$ALIAS_FILE" ]; then
@@ -171,6 +170,50 @@ alias h='history'
 alias rootrc='code .bashrc --no-sandbox --user-data-dir'
 alias rootzrc='code .zshrc --no-sandbox --user-data-dir'
 alias rootaliases='code .aliases --no-sandbox --user-data-dir'
+# Execute files more easily
+run() {
+  if [ "$#" -eq 0 ]; then
+    printf '%s\n' "You must provide at least one argument."
+    printf '%s\n' "Example: run fileToExecute.sh"
+    return 1
+  fi
+
+  case $1 in
+    *[!/]*)
+      # Don't contain "/", use ./fileToExecute.sh
+      cmd=./$1
+      ;;
+    *)
+      # Already contains "/", use as is (./fileToExecute.sh, dir/fileToExecute.sh, /path/fileToExecute.sh)
+      cmd=$1
+      ;;
+  esac
+
+  shift
+  "$cmd" "$@"
+}
+
+mkrun() {
+    if [ "$#" -eq 0 ]; then
+        printf '%s\n' "You must provide at least one argument."
+        printf '%s\n' "Example: exec script.sh"
+        return 1
+    fi
+
+    for f in "$@"; do
+        case $f in
+            */*)
+                # Ya trae ruta: ./script.sh, scripts/a.sh, /ruta/b.sh
+                target=$f
+                ;;
+            *)
+                # Solo nombre → asumimos ./nombre
+                target=./$f
+                ;;
+        esac
+        chmod +x "$target"
+    done
+}
 EOF
 
     return 0
