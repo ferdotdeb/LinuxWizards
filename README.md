@@ -93,7 +93,7 @@ The `aliasWizard.sh` script will add the following aliases to your shell configu
 
 | Category | Alias | Original Command | Description |
 | :--- | :--- | :--- | :--- |
-| **Navigation** ||||
+| **Navigation** | | | |
 | | `ls` | `ls --color=auto` | List files with colors. |
 | | `ll` | `ls -la` | List all files (including hidden) in long format. |
 | | `la` | `ls -A` | List all files, including hidden, except for `.` and `..`. |
@@ -110,12 +110,12 @@ The `aliasWizard.sh` script will add the following aliases to your shell configu
 | | `grep` | `grep --color=auto` | Search text with colored output. |
 | | `fgrep` | `fgrep --color=auto` | Search fixed strings with colored output. |
 | | `egrep` | `egrep --color=auto` | Search extended regex with colored output. |
-| **APT Shortcuts** ||||
+| **APT Shortcuts** | | | |
 | | `upg` | `sudo apt update && sudo apt upgrade -y` | Update package lists and upgrade all packages. |
 | | `install` | `sudo apt install` | Install a package. |
 | | `remove` | `sudo apt remove` | Remove a package. |
 | | `clean` | `sudo apt autoremove && sudo apt autoclean && sudo apt clean` | Clean up unused packages and cache. |
-| **System Shortcuts** ||||
+| **System Shortcuts** | | | |
 | | `cls` | `clear` | Clear the terminal screen. |
 | | `python` | `python3` | Use `python3` as the default Python interpreter. |
 | | `ff` | `fastfetch` | Display system information quickly. |
@@ -136,7 +136,7 @@ The `aliasWizard.sh` script will add the following aliases to your shell configu
 | | `c` | `code .` | Open current directory in VS Code. |
 | | `code` | `code .` | Open current directory in VS Code. |
 | | `cursor` | `cursor .` | Open current directory in Cursor. |
-| **Docker Shortcuts** ||||
+| **Docker Shortcuts** | | | |
 | | `dc` | `docker` | Shortcut for the `docker` command. |
 | | `dcu` | `docker compose up -d` | Start services in detached mode with Docker Compose. |
 | | `dci` | `docker images` | List all Docker images. |
@@ -144,12 +144,12 @@ The `aliasWizard.sh` script will add the following aliases to your shell configu
 | | `dcrm` | `docker rm` | Remove one or more containers. |
 | | `dcrmi` | `docker rmi` | Remove one or more images. |
 | | `dockerclean` | `docker system prune -a --volumes` | Remove all unused Docker objects, including volumes. |
-| **Kubernetes Shortcuts** ||||
+| **Kubernetes Shortcuts** | | | |
 | | `kc` | `kubectl` | Shortcut for the `kubectl` command. |
 | | `mc` | `minikube` | Shortcut for the `minikube` command. |
 | | `kcgp` | `kubectl get pods` | Get all pods in the current namespace. |
 | | `kcgpw` | `kubectl get pods -o wide` | Get all pods with more details (IP, node). |
-| **Git Shortcuts** ||||
+| **Git Shortcuts** | | | |
 | | `gi` | `git init .` | Initialize a new Git repository in the current directory. |
 | | `ga` | `git add` | Add file contents to the index. |
 | | `gc` | `git commit -m` | Record changes to the repository with a message. |
@@ -178,7 +178,7 @@ The `aliasWizard.sh` script will add the following aliases to your shell configu
 | | `gitunstage` | `git reset HEAD --` | Unstage files from the index. |
 | | `gitrepair` | `sudo chown -R "$(whoami)":"$(id -gn)" .git` | Fix ownership issues in the `.git` directory. |
 | | `gitclean` | `git fetch origin --prune` | Remove remote-tracking branches that no longer exist on the remote. |
-| **Miscellaneous** ||||
+| **Miscellaneous** | | | |
 | | `h` | `history` | Display command history. |
 | | `rootrc` | `code .bashrc --no-sandbox --user-data-dir` | Open .bashrc in VS Code as root (use with caution). |
 | | `rootzrc` | `code .zshrc --no-sandbox --user-data-dir` | Open .zshrc in VS Code as root (use with caution). |
