@@ -1,6 +1,11 @@
-# ======================================================================
-# COMMON UTILITY FUNCTIONS FOR SHELL SCRIPTS
-# ======================================================================
+# Common functions across scripts
+
+# Shell colors
+
+BLUE='\033[0;34m'
+ORANGE='\033[38;5;208m'   # naranja (256 colores)
+RESET='\033[0m'
+
 
 # Enable/disable colors (disable if output is not a TTY or NO_COLOR is set)
 use_color=1
