@@ -3,10 +3,6 @@
 # Source common functions
 . ./common_functions.sh
 
-# Color to welcome function
-BLUE='\033[0;34m'
-RESET='\033[0m'
-
 welcome() {
     printf "${BLUE}                                                                                    ${RESET}\n";
     printf "${BLUE} █████╗ ██╗     ██╗ █████╗ ███████╗    ██╗    ██╗██╗███████╗ █████╗ ██████╗ ██████╗ ${RESET}\n";
