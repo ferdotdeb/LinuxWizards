@@ -19,19 +19,14 @@ ALIAS_SOURCE_BLOCK='if [ -f ~/.aliases ]; then
     . ~/.aliases
 fi'
 
-detect_shell() {
-    dots "Searching for your current shell"
-    printf '%s\n' "Your current shell is ${SHELL##*/}"
-}
-
 config_source() {
-    dots "Adding alias search to the configuration file of your ${SHELL##*/} shell"
+    dots "Searching for your current shell"
 
     if echo "$SHELL" | grep -q "bash"; then
-        print_success "bash shell detected."
+        print_success "bash shell detected"
         RC_FILE="$HOME/.bashrc"
     elif echo "$SHELL" | grep -q "zsh"; then
-        print_success "zsh shell detected."
+        print_success "zsh shell detected"
         RC_FILE="$HOME/.zshrc"
     else
         print_error "The $SHELL shell is unsupported"
@@ -59,7 +54,7 @@ detect_alias_file() {
     ALIAS_FILE="$HOME/.aliases"
 
     if [ -f "$ALIAS_FILE" ]; then
-        print_success "$ALIAS_FILE exists"
+        print_success "$ALIAS_FILE already exists"
     else
         print_error "$ALIAS_FILE not found."
         dots "Creating $ALIAS_FILE file"
@@ -71,7 +66,7 @@ detect_alias_file() {
 
 setup_aliases() {
     dots "Applying alias to .aliases file"
-    printf '%s\n' "You can see the list of all aliases documented in the README file"
+    dots "You can see the list of all aliases documented in the README file"
     
     # Add each alias to the detected config file if it does not already exist
     # Using a here-document for better portability
@@ -231,7 +226,6 @@ finish_setup() {
 # Main function to organize the script flow
 main() {
     welcome
-    detect_shell
     config_source
     detect_alias_file
     setup_aliases
