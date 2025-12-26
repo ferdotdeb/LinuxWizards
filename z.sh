@@ -16,6 +16,15 @@ welcome() {
     return 0
 }
 
+ghostty_theme() {
+    if command_exists ghostty; then
+        echo "theme = Homebrew" >> ~/.config/ghostty/config
+        return 0
+    else
+        return 0
+    fi
+}
+
 install_zsh() {
     sudo apt update && sudo apt upgrade -y
     sudo apt install zsh -y
@@ -59,6 +68,7 @@ install_oh_my_zsh() {
 
 main() {
     welcome
+    ghostty_theme
     install_zsh
     set_colors
     activate_colors
@@ -67,4 +77,5 @@ main() {
     install_oh_my_zsh
 }
 
+# Run main
 main
