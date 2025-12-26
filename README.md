@@ -79,13 +79,13 @@ This script automates the installation of essential software for developers. It 
 
 This script streamlines your Git setup. It configures your global Git credentials (username and email) and generates an ED25519 SSH key pair for secure authentication with platforms like GitHub or GitLab. The script is designed to be fully POSIX-compliant, ensuring it runs on any standard Linux distribution or macOS without modification.
 
-### `aliasWizard.sh`
-
-This script enhances your terminal productivity by automatically setting up a comprehensive list of useful aliases. It creates or uses the existing `.aliases` file in your home directory and populates it with carefully curated aliases to streamline common development tasks. It supports both `bash` and `zsh` shells. The script checks for duplicate entries before adding new aliases, ensuring a clean configuration.
-
 ### `repoWizard.sh`
 
 This script automates the process of creating a new Git repository. It initializes a repository in the specified directory, creates a standard `.gitignore` and `.dockerignore` file, and sets up a basic project structure including `docker/dev`, `docker/prod`, `.devcontainer`, and `.vscode` directories with initial configuration files. The script is designed to be fully POSIX-compliant.
+
+### `aliasWizard.sh`
+
+This script enhances your terminal productivity by automatically setting up a comprehensive list of useful aliases. It creates or uses the existing `.aliases` file in your home directory and populates it with carefully curated aliases to streamline common development tasks. It supports both `bash` and `zsh` shells. The script checks for duplicate entries before adding new aliases, ensuring a clean configuration.
 
 ## Alias Reference
 
@@ -183,6 +183,32 @@ The `aliasWizard.sh` script will add the following aliases to your shell configu
 | | `rootrc` | `code .bashrc --no-sandbox --user-data-dir` | Open .bashrc in VS Code as root (use with caution). |
 | | `rootzrc` | `code .zshrc --no-sandbox --user-data-dir` | Open .zshrc in VS Code as root (use with caution). |
 | | `rootaliases` | `code .aliases --no-sandbox --user-data-dir` | Open .aliases in VS Code as root (use with caution). |
+
+## Helper Functions
+
+In addition to aliases, the script installs two useful shell functions:
+
+### `run`
+
+Executes a script or binary. If the filename doesn't contain a slash, it assumes the file is in the current directory (prepends `./`).
+
+**Usage:**
+
+```bash
+run script.sh      # Equivalent to ./script.sh
+run folder/script  # Equivalent to folder/script
+```
+
+### `mkrun`
+
+Makes files executable (`chmod +x`). Like `run`, it assumes files are in the current directory if no path is provided.
+
+**Usage:**
+
+```bash
+mkrun script.sh    # Equivalent to chmod +x ./script.sh
+mkrun file1 file2  # Makes multiple files executable
+```
 
 ## License
 
