@@ -3,9 +3,13 @@
 # Shell colors
 
 BLUE='\033[0;34m'
-ORANGE='\033[38;5;208m'   # naranja (256 colores)
+ORANGE='\033[38;5;208m'
 RESET='\033[0m'
-
+RB_RED=$(printf '\033[38;5;196m')
+RB_ORANGE=$(printf '\033[38;5;202m')
+RB_YELLOW=$(printf '\033[38;5;226m')
+RB_GREEN=$(printf '\033[38;5;082m')
+RB_VIOLET=$(printf '\033[38;5;163m')
 
 # Enable/disable colors (disable if output is not a TTY or NO_COLOR is set)
 use_color=1
