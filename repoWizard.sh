@@ -81,7 +81,7 @@ basic_setup(){
     git init .
 
     # Create .gitignore
-    printf '%s\n' '.env' '.venv/' 'node_modules/' '*.log' '*.tmp' '.DS_Store' >> .gitignore
+    printf '%s\n' '.env' '.venv/' 'node_modules/' '*.log' '*.tmp' '.DS_Store' 'AGENTS.md' >> .gitignore
 
     print_success ".gitignore file created"
 
@@ -90,11 +90,11 @@ basic_setup(){
 
     print_success ".env and .env.example files created"
 
-    # Add README and LICENSE content
+    # Create basic project files README.md, AGENTS.md and LICENSE
+    touch README.md AGENTS.md LICENSE
     printf '%s\n' "# New Project" >> README.md
     printf '%s\n' "No license defined for this project yet." >> LICENSE
-    print_success "README.md and LICENSE files created"
-
+    print_success "README.md, AGENTS.md and LICENSE files created"
     return 0
 }
 
