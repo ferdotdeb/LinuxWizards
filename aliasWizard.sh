@@ -218,7 +218,7 @@ finish_setup() {
     print_success "Aliases configured successfully!"
     dots "Reloading $ALIAS_FILE to activate aliases"
     . "$ALIAS_FILE"
-    print_success "Aliases activated successfully!"
+    print_success "Aliases activated successfully with aliasWizard"
     printf '%s\n' "Please restart your terminal"
     return 0
 }

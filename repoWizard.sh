@@ -145,7 +145,7 @@ finish_setup(){
     git status
     git switch -c dev
     print_success "Branch 'dev' created and switched to it."
-    printf '%s\n' "Repository created with repoWizard.sh"
+    printf '%s\n' "Repository created with repoWizard"
 
     return 0
 }
