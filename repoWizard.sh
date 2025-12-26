@@ -22,7 +22,6 @@ test_git() {
         print_success "Git is already installed"
         git_version=$(git --version 2>/dev/null | sed -n 's/.*version \([0-9][0-9.]*\).*/\1/p')
         printf '%s\n' "Git version: $git_version"
-        sleep 3
         return 0
     else
         print_error "Git is not installed."
@@ -31,7 +30,6 @@ test_git() {
     fi
 }
 
-# Obtaining user info
 new_repo() {
     # 1) Ask for the target directory, default to current
     printf '%s' "Enter repo location, leave blank to use the actual directory: "
@@ -52,15 +50,15 @@ new_repo() {
 
     # 4) Create if it does not exist
     if [ ! -d "$repo_location" ]; then
-        printf '%s' "Directory does not exist. Create it? [y/N]"
+        printf '%s' "Directory does not exist, create it? [Y/n] "
         read -r ans
         case $ans in
-        [Yy]*)
+        [Yy]*|"")
             if ! mkdir -p -- "$repo_location"; then
                 print_error "Failed to create: $repo_location"
                 return 1
             fi
-            print_success "Location created: $repo_location"
+            print_success "Directory created in: $repo_location"
             ;;
         *)  print_error "Cannot proceed without a valid location"; exit 0 ;;
         esac
@@ -71,47 +69,85 @@ new_repo() {
         print_error "No write permission on: $repo_location"
         exit 0
     fi
-    
-    print_success "Using: $repo_location"
 
     cd "$repo_location" || { print_error "Failed to change directory to: $repo_location"; exit 0; }
+    
+    return 0
 }
 
-setting_repo() {
+basic_setup(){
     dots "Setting up the repository"
 
     git init .
 
+    # Create .gitignore
+    printf '%s\n' '.env' '.venv/' 'node_modules/' '*.log' '*.tmp' '.DS_Store' >> .gitignore
+
+    print_success ".gitignore file created"
+
+    # Create env files
+    touch .env .env.example
+
+    print_success ".env and .env.example files created"
+
+    # Add README and LICENSE content
+    printf '%s\n' "# New Project" >> README.md
+    printf '%s\n' "No license defined for this project yet." >> LICENSE
+    print_success "README.md and LICENSE files created"
+
+    return 0
+}
+
+require_devcontainers(){
+    printf '%s' "The project need devcontainer files and directories? [y/N] "
+    read -r ans
+    
+    case "$ans" in
+        [Yy]*)
+            devcontainer_setup
+            ;;
+        *)
+            finish_setup
+            ;;
+    esac
+}
+
+devcontainer_setup(){
     # Create directories
     mkdir -p docker/dev docker/prod .devcontainer .vscode
+
+    print_success "Docker and devcontainers directories created"
 
     # Create devcontainer files
     touch -- .devcontainer/devcontainer.json .devcontainer/compose.yaml
 
+    print_success "Devcontainers files created"
+
     # Create docker files
     touch docker/dev/Dockerfile docker/dev/compose.yaml  docker/prod/Dockerfile docker/prod/compose.yaml
 
-    # Create .gitignore
-    printf '%s\n' '.env' '.venv/' 'node_modules/' '*.log' '*.tmp' '.DS_Store' >> .gitignore
-
+    print_success "Dockerfiles for prod and dev created"
+    
     # Create .dockerignore
     printf '%s\n' '.git/' '.gitignore' '.gitattributes' '.devcontainer/' '.vscode/' '.venv/' 'node_modules/' '.env.example' '*.log' '*.tmp' '.DS_Store' README.md LICENSE >> .dockerignore
-        
-    # Add README and LICENSE content
-    printf '%s\n' "# New Project" >> README.md
-    printf '%s\n' "No license defined for this project yet." >> LICENSE
+    
+    print_success ".dockerignore file created"
+    
+    finish_setup
+}
 
-    # Create env files
-    touch .env .env.example
-        
+finish_setup(){
     # Git operations
+    dots "Making initial commit"
     git add .
     git commit -m "🎉 Project created!"
     printf '%s\n' "Git status:"
     git status
     git switch -c dev
     print_success "Branch 'dev' created and switched to it."
-    print_success "Repository created with repoWizard.sh"
+    printf '%s\n' "Repository created with repoWizard.sh"
+
+    return 0
 }
 
 # Main execution
@@ -119,7 +155,8 @@ main() {
     welcome
     test_git
     new_repo
-    setting_repo
+    basic_setup
+    require_devcontainers
     return 0
 }
 
