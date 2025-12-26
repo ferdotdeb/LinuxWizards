@@ -1,6 +1,6 @@
 # LinuxWizards
 
-A collection of powerful Shells scripts to automate the setup and configuration of a developer-friendly Linux environment.
+A collection of powerful shell scripts to automate the setup and configuration of a developer-friendly Linux environment.
 
 ## Features
 
