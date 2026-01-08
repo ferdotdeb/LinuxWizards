@@ -17,9 +17,12 @@ welcome() {
     return 0
 }
 
-ghostty_theme() {
+ghostty_configs() {
     if command_exists ghostty; then
+        echo "Adding ghostty configs"
         echo "theme = Homebrew" >> ~/.config/ghostty/config
+        echo "bell-features = no-title,no-attention" >> ~/.config/ghostty/config
+        echo "shell-integration-features = ssh-env" >> ~/.config/ghostty/config
         return 0
     else
         return 0
@@ -27,6 +30,8 @@ ghostty_theme() {
 }
 
 set_colors() {
+    echo "Setting custom dircolors"
+
     cat > ~/.dircolors <<'EOF'
     # Directories (More contrast than blue)
     DIR 01;36
@@ -39,19 +44,14 @@ return 0
 }
 
 install_zsh() {
+    echo "Installing zsh shell"
     sudo apt update && sudo apt upgrade -y
     sudo apt install zsh -y
     return 0
 }
 
-setup_zsh() {
-    echo "Adding custom color configurations to .zshrc"
-    echo 'eval "$(dircolors -b ~/.dircolors)"' >> ~/.zshrc
-
-    echo "Setting default TERM to xterm-256color in .zshrc"
-    echo "export TERM=xterm-256color" >> ~/.zshrc
-
-    echo "Setting ZSH theme to powerlevel10k in .zshrc"
+setup_zsh_theme() {
+    echo "Setting zsh theme to powerlevel10k in .zshrc"
 
     local theme="${1:-powerlevel10k/powerlevel10k}"
     sed -i "s/^ZSH_THEME=\".*\"/ZSH_THEME=\"$theme\"/" ~/.zshrc
@@ -66,24 +66,30 @@ activate_zsh() {
 }
 
 install_oh_my_zsh() {
+    echo "Installing ohmyzsh"
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
     return 0
 }
 
-install_powerlevel10k() {
+install_pl10k_theme() {
+    echo "Installing powerlevel10k theme"
     git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
     return 0
 }
 
 main() {
     welcome
-    ghostty_theme
+    ghostty_configs
     set_colors
     install_zsh
-    setup_zsh
+    setup_zsh_theme
     activate_zsh
     install_oh_my_zsh
-    install_powerlevel10k
+    install_pl10k_theme
+    print_success "zsh setup complete!"
+    echo "Please restart your terminal to apply all changes."
+    
+    return 0
 }
 
 # Run main
