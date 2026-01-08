@@ -230,6 +230,7 @@ main() {
     detect_alias_file
     setup_aliases
     finish_setup
+    
     return 0
 }
 

@@ -225,6 +225,7 @@ main() {
   install_vscode
   install_uv
   install_docker
+  print_success "System setup completed successfully!"
   return 0
 }
 

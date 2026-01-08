@@ -156,7 +156,7 @@ create_ssh_key() {
     cat ~/.ssh/id_ed25519.pub
 
     print_success "SSH key created and added to the SSH agent successfully!"
-    printf '%s\n' "Git configuration powered by gitWizard"
+
     return 0
 }
 
@@ -167,6 +167,8 @@ main() {
     collect_user_info
     set_git_global_configs
     create_ssh_key
+    printf '%s\n' "Git configuration powered by gitWizard"
+    
     return 0
 }
 

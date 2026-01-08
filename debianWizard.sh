@@ -74,6 +74,9 @@ main() {
     removing_libreoffice
     setting_vim
     activate_bluetooth
+    print_success "Debian basic configuration completed!"
+    
+    return 0
 }
 
 # Run main
