@@ -1,4 +1,6 @@
-# Common functions across scripts
+#!/bin/bash
+
+# These are common functions across scripts
 
 # Shell colors
 
@@ -13,11 +15,11 @@ RB_VIOLET=$(printf '\033[38;5;163m')
 
 # Enable/disable colors (disable if output is not a TTY or NO_COLOR is set)
 use_color=1
-if [ -n "$NO_COLOR" ] || [ ! -t 1 ]; then
+if [[ -n "$NO_COLOR" ]] || [[ ! -t 1 ]]; then
     use_color=0
 fi
 
-if [ "$use_color" -eq 1 ]; then
+if (( use_color == 1 )); then
   RED='\033[0;31m'
   GREEN='\033[0;32m'
   YELLOW='\033[1;33m'
@@ -30,7 +32,7 @@ fi
 print_message() {
     local color="$1"; shift
     local message="$*"
-    if [ "$use_color" -eq 1 ]; then
+    if (( use_color == 1 )); then
         # %b for color escapes; %s for literal text (without interpreting backslashes)
         printf '%b%s%b\n' "$color" "$message" "$NC"
     else
@@ -42,34 +44,34 @@ print_success() { print_message "$GREEN" "✓ $*"; }
 print_error()   { print_message "$RED"   "✗ ERROR: $*"; }
 print_warning() { print_message "$YELLOW" "⚠ WARNING: $*"; }
 
-# POSIX/portable (avoids &> which is bashism)
+# Check if command exists (bash version)
 command_exists() {
-    command -v -- "$1" >/dev/null 2>&1
+    command -v "$1" &>/dev/null
 }
 
 # Uses DOTS_COUNT (default 3) and DOTS_DELAY (default 1s) as optional overrides.
 dots() {
-    msg=${1:-}
-    count=${DOTS_COUNT:-3}
-    delay=${DOTS_DELAY:-1}
+    local msg=${1:-}
+    local count=${DOTS_COUNT:-3}
+    local delay=${DOTS_DELAY:-1}
 
-    [ -n "$msg" ] && printf '%s' "$msg"
+    [[ -n "$msg" ]] && printf '%s' "$msg"
 
-    i=0
-    if [ ! -t 1 ]; then
+    local i=0
+    if [[ ! -t 1 ]]; then
         # No TTY (CI/logs), print without delays
-        while [ "$i" -lt "$count" ]; do
+        while (( i < count )); do
             printf '.'
-            i=$((i+1))
+            (( i++ ))
         done
         printf '\n'
         return 0
     fi
 
-    while [ "$i" -lt "$count" ]; do
+    while (( i < count )); do
         printf '.'
-        sleep "$delay"     # Integers for POSIX portability
-        i=$((i+1))
+        sleep "$delay"
+        (( i++ ))
     done
     printf '\n'
 }

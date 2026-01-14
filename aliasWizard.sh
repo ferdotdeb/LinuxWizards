@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 
-# Source common functions
-. ./common_functions.sh
+# Source common functions file
+source ./common_functions.sh
 
 welcome() {
     printf "${BLUE}                                                                                    ${RESET}\n";
@@ -15,7 +15,7 @@ welcome() {
     sleep 5
 }
 
-ALIAS_SOURCE_BLOCK='if [ -f ~/.aliases ]; then
+ALIAS_SOURCE_BLOCK='if [[ -f ~/.aliases ]]; then
     . ~/.aliases
 fi'
 
@@ -35,7 +35,7 @@ config_source() {
     fi
 
     # Check if the alias source block already exists in RC_FILE
-    if grep -qF "if [ -f ~/.aliases ]; then" "$RC_FILE" 2>/dev/null; then
+    if grep -qF "if [[ -f ~/.aliases ]]; then" "$RC_FILE" 2>/dev/null; then
         print_success "Alias source block already exists in $RC_FILE file"
     else
         dots "Adding alias source block to $RC_FILE file"
@@ -53,7 +53,7 @@ config_source() {
 detect_alias_file() {
     ALIAS_FILE="$HOME/.aliases"
 
-    if [ -f "$ALIAS_FILE" ]; then
+    if [[ -f "$ALIAS_FILE" ]]; then
         print_success "$ALIAS_FILE already exists"
     else
         print_error "$ALIAS_FILE not found."
@@ -69,9 +69,9 @@ setup_aliases() {
     dots "You can see the list of all aliases documented in the README file"
     
     # Add each alias to the detected config file if it does not already exist
-    # Using a here-document for better portability
+    # Using a here-document for bash
     while IFS= read -r alias_line; do
-        if [ -n "$alias_line" ] && ! grep -qF "$alias_line" "$ALIAS_FILE" 2>/dev/null; then
+        if [[ -n "$alias_line" ]] && ! grep -qF "$alias_line" "$ALIAS_FILE" 2>/dev/null; then
             printf '%s\n' "$alias_line" >> "$ALIAS_FILE"
         fi
     done << 'EOF'
@@ -136,8 +136,8 @@ alias gi='git init .'
 alias ga='git add'
 alias gc='git commit -m'
 alias gp='git push'
-alias autocommit='read -p "Commit message: " msg && git add . && git commit -m "$msg"'
-alias autopush='read -p "Commit message: " msg && git add . && git commit -m "$msg" && git push'
+alias autocommit='read -e -p "Commit message: " msg && git add . && git commit -m "$msg"'
+alias autopush='read -e -p "Commit message: " msg && git add . && git commit -m "$msg" && git push'
 alias gpl='git pull'
 alias gsw='git switch'
 alias gsc='git switch -c'
@@ -167,7 +167,7 @@ alias rootzrc='code .zshrc --no-sandbox --user-data-dir'
 alias rootaliases='code .aliases --no-sandbox --user-data-dir'
 # Execute files more easily
 run() {
-  if [ "$#" -eq 0 ]; then
+  if [[ "$#" -eq 0 ]]; then
     printf '%s\n' "You must provide at least one argument."
     printf '%s\n' "Example: run fileToExecute.sh"
     return 1
@@ -189,7 +189,7 @@ run() {
 }
 # Make files executable more easily
 mkrun() {
-    if [ "$#" -eq 0 ]; then
+    if [[ "$#" -eq 0 ]]; then
         printf '%s\n' "You must provide at least one argument."
         printf '%s\n' "Example: mkrun script.sh"
         return 1
@@ -217,7 +217,7 @@ EOF
 finish_setup() {
     print_success "Aliases configured successfully!"
     dots "Reloading $ALIAS_FILE to activate aliases"
-    . "$ALIAS_FILE"
+    source "$ALIAS_FILE"
     print_success "Aliases activated successfully with aliasWizard"
     printf '%s\n' "Please restart your terminal"
     return 0

@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 
-. ./common_functions.sh  # Ensure this path is correct
+source ./common_functions.sh  # Ensure this path is correct
 
 # Global variables
 git_username=""
@@ -39,8 +39,8 @@ test_git() {
 validate_email() {
     local email="$1"
     local regex="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-    # Use grep for POSIX-compliant regex matching
-    if printf '%s\n' "$email" | grep -qE "$regex"; then
+    # Use bash regex matching
+    if [[ $email =~ $regex ]]; then
         return 0
     else
         print_error "Invalid email format"
@@ -54,30 +54,30 @@ collect_user_info() {
     
     # Get Git username
     printf '%s' "Enter your full name for Git installation: "
-    read -r git_username
-    while [ -z "$git_username" ]; do
+    read -er git_username
+    while [[ -z "$git_username" ]]; do
         print_error "The name cannot be empty"
         printf '%s' "Enter your full name for Git installation: "
-        read -r git_username
+        read -er git_username
     done
     
     # Get Git email with validation
     printf '%s' "Enter your email for Git installation: "
-    read -r git_email
+    read -er git_email
     while ! validate_email "$git_email"; do
         print_error "Please enter a valid email address"
         printf '%s' "Enter your email for Git installation: "
-        read -r git_email
+        read -er git_email
     done
     
-    # Get SSH password with stty for portability
+    # Get SSH password
     printf '%s' "Enter your password for SSH key generation: "
     stty -echo
     read -r ssh_password
     stty echo
     printf '\n'
     
-    while [ -z "$ssh_password" ]; do
+    while [[ -z "$ssh_password" ]]; do
         print_error "Password cannot be empty"
         printf '%s' "Enter your password for SSH key generation: "
         stty -echo
@@ -99,8 +99,6 @@ set_git_global_configs() {
     git config --global pull.rebase false
     git config --global push.autoSetupRemote true
     git config --global core.editor "nano"
-
-    # Signing (optional, if you use SSH and Git >= 2.34)
     git config --global gpg.format ssh
     git config --global user.signingkey ~/.ssh/id_ed25519.pub
     git config --global commit.gpgsign true

@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 
-# Source common functions portably
-. ./common_functions.sh
+# Source common functions file
+source ./common_functions.sh
 
 welcome() {
     printf '%s\n' "                                                                                  "
@@ -20,7 +20,11 @@ test_git() {
 
     if command_exists git; then
         print_success "Git is already installed"
-        git_version=$(git --version 2>/dev/null | sed -n 's/.*version \([0-9][0-9.]*\).*/\1/p')
+        # Bash regex extraction (bashismo puro, sin sed)
+        git_output=$(git --version 2>/dev/null)
+        if [[ $git_output =~ version[[:space:]]([0-9][0-9.]*) ]]; then
+            git_version="${BASH_REMATCH[1]}"
+        fi
         printf '%s\n' "Git version: $git_version"
         return 0
     else
@@ -33,25 +37,22 @@ test_git() {
 new_repo() {
     # 1) Ask for the target directory, default to current
     printf '%s' "Enter repo location, leave blank to use the actual directory: "
-    read -r repo_location
+    read -er repo_location
     repo_location=${repo_location:-.}
 
-    # 2) Expand ~ in a portable way
-    case $repo_location in
-        \~/*) repo_location="$HOME/${repo_location#\~/}" ;;
-        \~)   repo_location="$HOME" ;;
-    esac
+    # 2) Expand ~ using bash built-in
+    repo_location="${repo_location/#\~/$HOME}"
 
-    # 3) Exists but is not a directory
-    if [ -e "$repo_location" ] && [ ! -d "$repo_location" ]; then
+    # 3) Exists but is not a directory (using bash [[ ]])
+    if [[ -e "$repo_location" && ! -d "$repo_location" ]]; then
         print_error "Path exists but is not a directory: $repo_location"
         return 1
     fi
 
     # 4) Create if it does not exist
-    if [ ! -d "$repo_location" ]; then
+    if [[ ! -d "$repo_location" ]]; then
         printf '%s' "Directory does not exist, create it? [Y/n] "
-        read -r ans
+        read -er ans
         case $ans in
         [Yy]*|"")
             if ! mkdir -p -- "$repo_location"; then
@@ -65,7 +66,7 @@ new_repo() {
     fi
 
     # 5) Write permissions
-    if [ ! -w "$repo_location" ]; then
+    if [[ ! -w "$repo_location" ]]; then
         print_error "No write permission on: $repo_location"
         exit 0
     fi
@@ -99,8 +100,8 @@ basic_setup(){
 }
 
 require_devcontainers(){
-    printf '%s' "The project need devcontainer files and directories? [y/N] "
-    read -r ans
+    printf '%s' "Create the files and directories to support devcontainers? [y/N] "
+    read -er ans
     
     case "$ans" in
         [Yy]*)
@@ -129,7 +130,7 @@ devcontainer_setup(){
     print_success "Dockerfiles for prod and dev created"
     
     # Create .dockerignore
-    printf '%s\n' '.git/' '.gitignore' '.gitattributes' '.devcontainer/' '.vscode/' '.venv/' 'node_modules/' '.env.example' '*.log' '*.tmp' '.DS_Store' README.md LICENSE >> .dockerignore
+    printf '%s\n' '.git/' '.gitignore' '.gitattributes' '.devcontainer/' '.vscode/' '.venv/' 'node_modules/' '.env.example' '*.log' '*.tmp' '.DS_Store' README.md AGENTS.md LICENSE >> .dockerignore
     
     print_success ".dockerignore file created"
     
