@@ -2,6 +2,11 @@
 
 # These are common functions across scripts
 
+# Ensure terminal settings are sane for input
+if [[ -t 0 ]]; then
+    stty erase ^? kill ^U 2>/dev/null
+fi
+
 # Shell colors
 
 BLUE='\033[0;34m'
@@ -14,6 +19,7 @@ RB_GREEN=$(printf '\033[38;5;082m')
 RB_VIOLET=$(printf '\033[38;5;163m')
 
 # Enable/disable colors (disable if output is not a TTY or NO_COLOR is set)
+
 use_color=1
 if [[ -n "$NO_COLOR" ]] || [[ ! -t 1 ]]; then
     use_color=0
@@ -29,6 +35,7 @@ else
 fi
 
 # Print colored message. Accepts arbitrary text after the color param.
+
 print_message() {
     local color="$1"; shift
     local message="$*"
@@ -50,6 +57,7 @@ command_exists() {
 }
 
 # Uses DOTS_COUNT (default 3) and DOTS_DELAY (default 1s) as optional overrides.
+
 dots() {
     local msg=${1:-}
     local count=${DOTS_COUNT:-3}
