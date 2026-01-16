@@ -53,21 +53,17 @@ collect_user_info() {
     printf '%s\n' "Please enter your personal information for Git configuration"
     
     # Get Git username
-    printf '%s' "Enter your full name for Git installation: "
-    read -er git_username
+    read -erp "Enter your full name for Git installation: " git_username
     while [[ -z "$git_username" ]]; do
         print_error "The name cannot be empty"
-        printf '%s' "Enter your full name for Git installation: "
-        read -er git_username
+        read -erp "Enter your full name for Git installation: " git_username
     done
     
     # Get Git email with validation
-    printf '%s' "Enter your email for Git installation: "
-    read -er git_email
+    read -erp "Enter your email for Git installation: " git_email
     while ! validate_email "$git_email"; do
         print_error "Please enter a valid email address"
-        printf '%s' "Enter your email for Git installation: "
-        read -er git_email
+        read -erp "Enter your email for Git installation: " git_email
     done
     
     # Get SSH password
@@ -131,20 +127,19 @@ create_ssh_key() {
     chmod 644 ~/.ssh/id_ed25519.pub
     print_success "SSH key permissions set successfully!"
 
-    dots "Starting SSH agent"
+    cd ~/.ssh
+
     # Start SSH agent and source its environment
-    ssh_agent_output="$(ssh-agent -s)"
-    eval "$ssh_agent_output" >/dev/null 2>&1
+    dots "Starting SSH agent"
+    eval "$(ssh-agent -s)"
     print_success "SSH agent started successfully!"
 
     print_warning "In 10 seconds you will need to enter your SSH key passphrase"
     sleep 10
-    printf '%s\n' "Please enter your SSH key passphrase (if any):"
+    read -erp "Please enter your SSH key passphrase (if any):"
 
     dots "Adding SSH key to the SSH agent"
-
     ssh-add ~/.ssh/id_ed25519
-
     print_success "SSH key added to the SSH agent successfully!"
 
     dots "Saving your public key to public_key.txt file"
