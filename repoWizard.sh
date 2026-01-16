@@ -36,8 +36,7 @@ test_git() {
 
 new_repo() {
     # 1) Ask for the target directory, default to current
-    printf '%s' "Enter repo location, leave blank to use the actual directory: "
-    read -er repo_location
+    read -erp "Enter repo location, leave blank to use the actual directory: " repo_location
     repo_location=${repo_location:-.}
 
     # 2) Expand ~ using bash built-in
@@ -51,8 +50,7 @@ new_repo() {
 
     # 4) Create if it does not exist
     if [[ ! -d "$repo_location" ]]; then
-        printf '%s' "Directory does not exist, create it? [Y/n] "
-        read -er ans
+        read -erp "Directory does not exist, create it? [Y/n] " ans
         case $ans in
         [Yy]*|"")
             if ! mkdir -p -- "$repo_location"; then
@@ -82,26 +80,21 @@ basic_setup(){
     git init .
 
     # Create .gitignore
-    printf '%s\n' '.env' '.venv/' 'node_modules/' '*.log' '*.tmp' '.DS_Store' 'AGENTS.md' >> .gitignore
-
+    printf '%s\n' '.env' '.venv/' 'node_modules/' '*.log' '*.tmp' '.DS_Store' >> .gitignore
     print_success ".gitignore file created"
 
-    # Create env files
-    touch .env .env.example
-
+    # Create basic project files README.md, AGENTS.md and LICENSE and env files
+    touch .env .env.example README.md AGENTS.md LICENSE
     print_success ".env and .env.example files created"
-
-    # Create basic project files README.md, AGENTS.md and LICENSE
-    touch README.md AGENTS.md LICENSE
     printf '%s\n' "# New Project" >> README.md
     printf '%s\n' "No license defined for this project yet." >> LICENSE
     print_success "README.md, AGENTS.md and LICENSE files created"
+    
     return 0
 }
 
 require_devcontainers(){
-    printf '%s' "Create the files and directories to support devcontainers? [y/N] "
-    read -er ans
+    read -erp "Create the files and directories to support devcontainers? [y/N] " ans
     
     case "$ans" in
         [Yy]*)
