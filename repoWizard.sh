@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# Source common functions file
-source ./common_functions.sh
+# Ensure this path is correct
+source ./common.sh
 
 welcome() {
     printf '%s\n' "                                                                                  "
@@ -15,17 +15,13 @@ welcome() {
     sleep 5
 }
 
-test_git() {
-    dots "Checking if Git is installed"
+git_test() {
+    dots "Checking if git is installed"
 
     if command_exists git; then
         print_success "Git is already installed"
-        # Bash regex extraction (bashismo puro, sin sed)
-        git_output=$(git --version 2>/dev/null)
-        if [[ $git_output =~ version[[:space:]]([0-9][0-9.]*) ]]; then
-            git_version="${BASH_REMATCH[1]}"
-        fi
-        printf '%s\n' "Git version: $git_version"
+        git_version=$(git --version)
+        printf '%s\n' "$git_version installed"
         return 0
     else
         print_error "Git is not installed."
@@ -42,7 +38,7 @@ new_repo() {
     # 2) Expand ~ using bash built-in
     repo_location="${repo_location/#\~/$HOME}"
 
-    # 3) Exists but is not a directory (using bash [[ ]])
+    # 3) Exists but is not a directory
     if [[ -e "$repo_location" && ! -d "$repo_location" ]]; then
         print_error "Path exists but is not a directory: $repo_location"
         return 1
@@ -83,51 +79,57 @@ basic_setup(){
     printf '%s\n' '.env' '.venv/' 'node_modules/' '*.log' '*.tmp' '.DS_Store' >> .gitignore
     print_success ".gitignore file created"
 
-    # Create basic project files README.md, AGENTS.md and LICENSE and env files
-    touch .env .env.example README.md AGENTS.md LICENSE
-    print_success ".env and .env.example files created"
-    printf '%s\n' "# New Project" >> README.md
-    printf '%s\n' "No license defined for this project yet." >> LICENSE
-    print_success "README.md, AGENTS.md and LICENSE files created"
-    
-    return 0
-}
+    # Create basic directories
+    mkdir .vscode .github
 
-require_devcontainers(){
+    # Create basic project files README.md, AGENTS.md and LICENSE and env files
+    touch -- .env .env.example README.md AGENTS.md CONTRIBUTING.md LICENSE .github/copilot-instructions.md
+    print_success ".env and .env.example files created"
+    print_success ".copilot-instructions.md file created in .github directory"
+    printf '%s\n' "# New Project" >> README.md
+    printf '%s\n' "# AGENTS.md" >> AGENTS.md
+    printf '%s\n' "# How to contribute?" >> CONTRIBUTING.md
+    printf '%s\n' "No license defined for this project yet." >> LICENSE
+    print_success "README.md, AGENTS.md, CONTRIBUTING.md and LICENSE files created"
+
     read -erp "Create the files and directories to support devcontainers? [y/N] " ans
-    
+
     case "$ans" in
         [Yy]*)
-            devcontainer_setup
-            ;;
-        *)
+            # Create directories
+            mkdir -p docker/dev docker/prod .devcontainer
+
+            print_success "Docker and devcontainers directories created"
+
+            # Create devcontainer files
+            touch -- .devcontainer/devcontainer.json .devcontainer/compose.yaml
+
+            print_success "Devcontainers files created"
+
+            # Create docker files
+            touch docker/dev/Dockerfile docker/dev/compose.yaml  docker/prod/Dockerfile docker/prod/compose.yaml
+
+            print_success "Dockerfiles for prod and dev created"
+            
+            # Create .dockerignore
+            printf '%s\n' '.git/' '.gitignore' '.gitattributes' '.devcontainer/' '.vscode/' '.venv/' 'node_modules/' '.env.example' '*.log' '*.tmp' '.DS_Store' README.md AGENTS.md CONTRIBUTING.md LICENSE >> .dockerignore
+            
+            print_success ".dockerignore file created"
+            
             finish_setup
             ;;
+        [Nn]*|"")
+            finish_setup
+            return 0
+            ;;
+        *)
+            print_error "Invalid input"
+            return 1
+            ;;
     esac
-}
 
-devcontainer_setup(){
-    # Create directories
-    mkdir -p docker/dev docker/prod .devcontainer .vscode
-
-    print_success "Docker and devcontainers directories created"
-
-    # Create devcontainer files
-    touch -- .devcontainer/devcontainer.json .devcontainer/compose.yaml
-
-    print_success "Devcontainers files created"
-
-    # Create docker files
-    touch docker/dev/Dockerfile docker/dev/compose.yaml  docker/prod/Dockerfile docker/prod/compose.yaml
-
-    print_success "Dockerfiles for prod and dev created"
     
-    # Create .dockerignore
-    printf '%s\n' '.git/' '.gitignore' '.gitattributes' '.devcontainer/' '.vscode/' '.venv/' 'node_modules/' '.env.example' '*.log' '*.tmp' '.DS_Store' README.md AGENTS.md LICENSE >> .dockerignore
-    
-    print_success ".dockerignore file created"
-    
-    finish_setup
+    return 0
 }
 
 finish_setup(){
@@ -150,7 +152,6 @@ main() {
     test_git
     new_repo
     basic_setup
-    require_devcontainers
     
     return 0
 }
