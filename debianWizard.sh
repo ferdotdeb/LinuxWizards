@@ -1,12 +1,15 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-source ./common_functions.sh # Ensure this path is correct
+# Ensure this path is correct
+source ./common.sh
 
 root_test(){
-    if [ "${EUID:-$(id -u)}" -eq 0 ] || id -nG "$USER" | grep -Eqw '(sudo|wheel)'; then
-        return 0
-    else
-        echo "You're NOT sudo/root user, run su, then run usermod -aG sudo 'username'"; exit 1
+    if [ "$EUID" -ne 0 ]; then 
+        printf '%s\n' "If you're NOT sudo/root user, you couldn't run this script properly."
+        printf '%s\n' "Run usermod -aG sudo $ USER to add your user to sudoers group."
+        dots "Rerunning script with sudo privileges"
+        sudo "$0" "$@"
+        exit $?
     fi
 }
 
