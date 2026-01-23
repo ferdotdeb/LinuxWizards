@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -e
+
+read -erp "Commit message: " msg
+
+if [[ -z "$msg" ]]; then
+  echo "Commit cancelled, empty message"
+  exit 1
+fi
+
+git add .
+git commit -m "$msg"
+git push
