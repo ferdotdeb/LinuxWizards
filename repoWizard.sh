@@ -112,7 +112,7 @@ basic_setup(){
             print_success "Dockerfiles for prod and dev created"
             
             # Create .dockerignore
-            printf '%s\n' '.git/' '.gitignore' '.gitattributes' '.devcontainer/' '.vscode/' '.venv/' 'node_modules/' '.env.example' '*.log' '*.tmp' '.DS_Store' README.md AGENTS.md CONTRIBUTING.md LICENSE >> .dockerignore
+            printf '%s\n' '.git/' '.gitignore' '.gitattributes' '.devcontainer/' '.vscode/' '.venv/' '.github/' 'node_modules/' '.env.example' '*.log' '*.tmp' '.DS_Store' README.md AGENTS.md CLAUDE.md CONTRIBUTING.md LICENSE >> .dockerignore
             
             print_success ".dockerignore file created"
             
