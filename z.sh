@@ -12,8 +12,8 @@ welcome() {
     printf '%s%s /_/ /_/ /_/%s\__, / %s   /___/%s____/%s_/ /_/  %s\n' $RB_RED $RB_ORANGE $RB_YELLOW $RB_GREEN $RB_YELLOW $RB_GREEN $RB_VIOLET $RB_RESET
     printf '          %s%s%s%s%s%s /____/%s                     %s\n' $RB_RED $RB_ORANGE $RB_YELLOW $RB_GREEN $RB_YELLOW $RB_GREEN $RB_VIOLET $RB_RESET
     printf '%s\n' "                                                ";
-    echo "Make sure you have MesloLGS NF Regular Nerd Font installed and set as your terminal font."
-    echo "And you're running in your desired terminal"
+    printf '%s\n' "Make sure you have MesloLGS NF Regular Nerd Font installed and set as your terminal font."
+    printf '%s\n' "And you're running in your desired terminal"
     sleep 5
     return 0
 }
@@ -21,9 +21,9 @@ welcome() {
 ghostty_configs() {
     if command_exists ghostty; then
         dots "Adding ghostty configs"
-        echo "theme = Homebrew" >> ~/.config/ghostty/config
-        echo "bell-features = no-title,no-attention" >> ~/.config/ghostty/config
-        echo "shell-integration-features = ssh-env" >> ~/.config/ghostty/config
+        printf '%s\n' "theme = Homebrew" >> ~/.config/ghostty/config
+        printf '%s\n' "bell-features = no-title,no-attention" >> ~/.config/ghostty/config
+        printf '%s\n' "shell-integration-features = ssh-env" >> ~/.config/ghostty/config
         return 0
     else
         print_warning "Ghostty isn't installed yet, skipping configs"
