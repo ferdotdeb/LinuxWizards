@@ -83,3 +83,7 @@ dots() {
     done
     printf '\n'
 }
+
+print_link() {
+    printf '\e]8;;%s\e\\%s\e]8;;\e\\\n' "$1" "$1"
+}
