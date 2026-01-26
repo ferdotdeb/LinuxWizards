@@ -62,7 +62,7 @@ removing_libreoffice(){
 
 setting_vim(){
     dots "Setting numbers to vim display"
-    echo "set nu" > ~/.vimrc
+     printf '%s\n' "set nu" > ~/.vimrc
 }
 
 activate_bluetooth(){
