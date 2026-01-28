@@ -4,14 +4,16 @@ A collection of powerful shell scripts to automate the setup and configuration o
 
 ## Features
 
-- **Software Wizard:** Installs essential development software, including browsers, editors, and containerization tools.
+- **Software Wizard:** Installs essential development software, Python UV, AI agents, and provides manual installation links.
 - **Git Wizard:** Automates Git configuration and SSH key generation for seamless version control.
-- **Alias Wizard:** Sets up a comprehensive list of shell aliases to boost productivity in the terminal.
+- **Alias Wizard:** Sets up a comprehensive list of shell aliases and helper scripts to boost productivity in the terminal.
 - **Repo Wizard:** Initializes new Git repositories with standard configurations and project structures.
+- **Debian Wizard:** Performs Debian-specific system configurations and fixes.
+- **Z Shell Wizard:** Installs and configures zsh with Oh My Zsh and Powerlevel10k theme.
 
 ## Prerequisites
 
-- Linux distribution, MacOS or any system with Shell and POSIX standard support.
+- Linux distribution, MacOS or any system with Bash shell support.
 - Debian or a Debian-based Linux distribution (Only for softwareWizard).
 - `sudo` or root privileges.
 - An active internet connection (For downloading software and updates).
@@ -21,32 +23,40 @@ A collection of powerful shell scripts to automate the setup and configuration o
 1. **Clone the repository:**
 
     ```bash
-    git clone https://github.com/ferdotdeb/LinuxWizards.git
+    git clone https://github.com/ferdotdev/LinuxWizards.git
     cd LinuxWizards
     ```
 
     **1.1. Or download the scripts individually:**
 
-    Use `curl` to download the scripts you need. Note that `common_functions.sh` is required by the other scripts.
+    Use `curl` to download the scripts you need. Note that `common.sh` is required by all other scripts.
 
     ```bash
-    curl -O https://raw.githubusercontent.com/ferdotdeb/LinuxWizards/main/common_functions.sh
+    curl -O https://raw.githubusercontent.com/ferdotdev/LinuxWizards/main/common.sh
     ```
 
     ```bash
-    curl -O https://raw.githubusercontent.com/ferdotdeb/LinuxWizards/main/softwareWizard.sh
+    curl -O https://raw.githubusercontent.com/ferdotdev/LinuxWizards/main/softwareWizard.sh
     ```
 
     ```bash
-    curl -O https://raw.githubusercontent.com/ferdotdeb/LinuxWizards/main/gitWizard.sh
+    curl -O https://raw.githubusercontent.com/ferdotdev/LinuxWizards/main/gitWizard.sh
     ```
 
     ```bash
-    curl -O https://raw.githubusercontent.com/ferdotdeb/LinuxWizards/main/aliasWizard.sh
+    curl -O https://raw.githubusercontent.com/ferdotdev/LinuxWizards/main/aliasWizard.sh
     ```
 
     ```bash
-    curl -O https://raw.githubusercontent.com/ferdotdeb/LinuxWizards/main/repoWizard.sh
+    curl -O https://raw.githubusercontent.com/ferdotdev/LinuxWizards/main/repoWizard.sh
+    ```
+
+    ```bash
+    curl -O https://raw.githubusercontent.com/ferdotdev/LinuxWizards/main/debianWizard.sh
+    ```
+
+    ```bash
+    curl -O https://raw.githubusercontent.com/ferdotdev/LinuxWizards/main/z.sh
     ```
 
 2. **Grant execution permissions:**
@@ -67,29 +77,89 @@ A collection of powerful shell scripts to automate the setup and configuration o
 
 ## Scripts Breakdown
 
-### `common_functions.sh`
+### `common.sh`
 
-This is a utility script and should not be executed directly. It provides shared functions for displaying colored status messages (success, error, warning), making the output of the main scripts more readable and user-friendly.
+This is a utility script and should not be executed directly. It provides shared functions used by all other scripts including:
+- Color management with `NO_COLOR` support
+- Print helpers (`print_success`, `print_error`, `print_warning`)
+- Progress indicators (`dots`)
+- Command existence checks (`command_exists`)
+- Clickable terminal links (`print_link`)
 
 ### `softwareWizard.sh`
 
-This script automates the installation of essential software for developers. It handles `apt` packages (vim, neovim, vlc, git, fastfetch, openssh-client, solaar, curl, wget) and third-party applications like Google Chrome and Visual Studio Code.
+This script automates the installation of essential software for developers. It performs the following tasks:
+- Updates system packages via APT
+- Installs essential packages: `vim`, `vlc`, `git`, `fastfetch`, `openssh-client`, `solaar`, `curl`, `wget`
+- Installs UV (modern Python package manager)
+- Installs AI agents: OpenCode and Claude Code
+- Provides clickable links for manual installation of: Node.js, Docker, Spotify, VS Code, and Cursor
+
+**Requires:** sudo or root privileges.
 
 ### `gitWizard.sh`
 
-This script streamlines your Git setup. It configures your global Git credentials (username and email) and generates an ED25519 SSH key pair for secure authentication with platforms like GitHub or GitLab. The script is designed to be fully POSIX-compliant, ensuring it runs on any standard Linux distribution or macOS without modification.
+This script streamlines your Git setup by performing the following:
+- Validates Git installation
+- Prompts for username and email (with email format validation)
+- Creates an ED25519 SSH key with passphrase protection
+- Sets proper permissions for SSH keys
+- Adds the key to SSH agent
+- Configures global Git settings including:
+  - Default branch: `main`
+  - Pull strategy: merge (no rebase)
+  - Auto setup remote on push
+  - SSH-based GPG signing
+  - Enhanced diff and merge settings
 
 ### `repoWizard.sh`
 
-This script automates the process of creating a new Git repository. It initializes a repository in the specified directory, creates a standard `.gitignore` and `.dockerignore` file, and sets up a basic project structure including `docker/dev`, `docker/prod`, `.devcontainer`, and `.vscode` directories with initial configuration files. The script is designed to be fully POSIX-compliant.
+This script automates the creation of new Git repositories with a standardized structure:
+- Initializes Git repository in specified directory
+- Creates basic files: `.gitignore`, `README.md`, `CONTRIBUTING.md`, `LICENSE`, `.env`, `.env.example`
+- Optional devcontainer setup with Docker directories and configuration files
+- Optional AI agents support (AGENTS.md, .claude, .github, .cursor directories)
+- Creates `.dockerignore` for containerized projects
+- Makes initial commit with emoji (🎉 Project created!)
+- Creates and switches to `dev` branch
 
 ### `aliasWizard.sh`
 
-This script enhances your terminal productivity by automatically setting up a comprehensive list of useful aliases. It creates or uses the existing `.aliases` file in your home directory and populates it with carefully curated aliases to streamline common development tasks. It supports both `bash` and `zsh` shells. The script checks for duplicate entries before adding new aliases, ensuring a clean configuration.
+This script enhances terminal productivity by:
+- Detecting shell type (bash or zsh)
+- Copying `scripts/.aliases` to `~/.aliases`
+- Adding source block to `.bashrc` or `.zshrc` (idempotent)
+- Installing helper scripts to `~/bin`: `run`, `mkrun`, `autocommit`, `autopush`
+- Adding `~/bin` to PATH
+
+**Supports:** bash and zsh shells.
+
+### `debianWizard.sh`
+
+This script performs Debian-specific system configurations:
+- Sets timezone to America/Mexico_City (customizable)
+- Removes outdated LibreOffice APT packages
+- Configures Vim with line numbers
+- Installs Realtek firmware and Blueman for Bluetooth support
+
+**Requires:** sudo or root privileges. Automatically re-executes with sudo if not running as root.
+**Recommended for:** Debian 13.
+
+### `z.sh`
+
+This script sets up a modern zsh environment:
+- Adds Ghostty terminal configurations (if installed)
+- Sets custom dircolors for better visual contrast
+- Installs zsh shell
+- Installs Oh My Zsh framework
+- Installs Powerlevel10k theme
+- Configures zsh to use Powerlevel10k
+
+**Note:** Requires MesloLGS NF Regular Nerd Font to be installed and set as terminal font.
 
 ## Alias Reference
 
-The `aliasWizard.sh` script will add the following aliases to your shell configuration:
+The `aliasWizard.sh` script copies the alias file from `scripts/.aliases` to `~/.aliases` and configures your shell to source it. The following aliases are included:
 
 | Category | Alias | Original Command | Description |
 | :--- | :--- | :--- | :--- |
@@ -104,7 +174,6 @@ The `aliasWizard.sh` script will add the following aliases to your shell configu
 | | `..` | `cd ..` | Go up one directory. |
 | | `...` | `cd ../..` | Go up two directories. |
 | | `....` | `cd ../../..` | Go up three directories. |
-| | `ch` | `cd ~` | Quick shortcut to navigate to home directory. |
 | | `dir` | `dir --color=auto` | List directory contents with colors. |
 | | `vdir` | `vdir --color=auto` | List directory contents verbosely with colors. |
 | | `grep` | `grep --color=auto` | Search text with colored output. |
@@ -141,6 +210,7 @@ The `aliasWizard.sh` script will add the following aliases to your shell configu
 | | `dcu` | `docker compose up -d` | Start services in detached mode with Docker Compose. |
 | | `dci` | `docker images` | List all Docker images. |
 | | `dcps` | `docker ps` | List all running containers. |
+| | `dcpsa` | `docker ps -a` | List all containers (including stopped). |
 | | `dcrm` | `docker rm` | Remove one or more containers. |
 | | `dcrmi` | `docker rmi` | Remove one or more images. |
 | | `dockerclean` | `docker system prune -a --volumes` | Remove all unused Docker objects, including volumes. |
@@ -154,8 +224,6 @@ The `aliasWizard.sh` script will add the following aliases to your shell configu
 | | `ga` | `git add` | Add file contents to the index. |
 | | `gc` | `git commit -m` | Record changes to the repository with a message. |
 | | `gp` | `git push` | Update remote refs along with associated objects. |
-| | `autocommit` | `read -p "Commit message: " msg && git add . && git commit -m "$msg"` | Add all files and commit with a custom message. |
-| | `autopush` | `read -p "Commit message: " msg && git add . && git commit -m "$msg" && git push` | Add, commit, and push with a single command. |
 | | `gpl` | `git pull` | Fetch from and integrate with another repository. |
 | | `gsw` | `git switch` | Switch branches. |
 | | `gsc` | `git switch -c` | Create and switch to a new branch. |
@@ -178,15 +246,18 @@ The `aliasWizard.sh` script will add the following aliases to your shell configu
 | | `gitunstage` | `git reset HEAD --` | Unstage files from the index. |
 | | `gitrepair` | `sudo chown -R "$(whoami)":"$(id -gn)" .git` | Fix ownership issues in the `.git` directory. |
 | | `gitclean` | `git fetch origin --prune` | Remove remote-tracking branches that no longer exist on the remote. |
+| **AI Agents** | | | |
+| | `cld` | `claude` | Shortcut for Claude AI agent CLI. |
+| | `ocd` | `opencode` | Shortcut for OpenCode AI agent CLI. |
 | **Miscellaneous** | | | |
 | | `h` | `history` | Display command history. |
 | | `rootrc` | `code .bashrc --no-sandbox --user-data-dir` | Open .bashrc in VS Code as root (use with caution). |
 | | `rootzrc` | `code .zshrc --no-sandbox --user-data-dir` | Open .zshrc in VS Code as root (use with caution). |
 | | `rootaliases` | `code .aliases --no-sandbox --user-data-dir` | Open .aliases in VS Code as root (use with caution). |
 
-## Helper Functions
+## Helper Scripts
 
-In addition to aliases, the script installs two useful shell functions:
+The `aliasWizard.sh` script installs the following helper scripts to `~/bin` and adds this directory to your PATH:
 
 ### `run`
 
@@ -208,6 +279,30 @@ Makes files executable (`chmod +x`). Like `run`, it assumes files are in the cur
 ```bash
 mkrun script.sh    # Equivalent to chmod +x ./script.sh
 mkrun file1 file2  # Makes multiple files executable
+```
+
+### `autocommit`
+
+Interactive script that prompts for a commit message, then stages all changes and commits them. Cancels if the message is empty.
+
+**Usage:**
+
+```bash
+autocommit
+# Prompts: Commit message:
+# Then runs: git add . && git commit -m "your message"
+```
+
+### `autopush`
+
+Interactive script that prompts for a commit message, then stages all changes, commits them, and pushes to the remote repository. Cancels if the message is empty.
+
+**Usage:**
+
+```bash
+autopush
+# Prompts: Commit message:
+# Then runs: git add . && git commit -m "your message" && git push
 ```
 
 ## License
