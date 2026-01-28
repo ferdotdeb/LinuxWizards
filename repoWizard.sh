@@ -13,6 +13,8 @@ welcome() {
     printf "${BLUE}╚═╝  ╚═╝╚══════╝╚═╝      ╚═════╝      ╚══╝╚══╝ ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ${RESET}\n";
     printf "${BLUE}                                                                                  ${RESET}\n";
     sleep 5
+    
+    return 0
 }
 
 git_test() {
@@ -30,6 +32,8 @@ git_test() {
         
         exit 1
     fi
+
+    return 0
 }
 
 new_repo() {
@@ -193,7 +197,7 @@ finish_setup() {
     printf '%s\n' "Git status:"
     git status
     git switch -c dev
-    print_success "Branch 'dev' created and switched to it."
+    print_success "Branch 'dev' created and switched to it"
     printf '%s\n' "Repository created with repoWizard"
 
     return 0

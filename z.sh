@@ -12,9 +12,10 @@ welcome() {
     printf '%s%s /_/ /_/ /_/%s\__, / %s   /___/%s____/%s_/ /_/  %s\n' $RB_RED $RB_ORANGE $RB_YELLOW $RB_GREEN $RB_YELLOW $RB_GREEN $RB_VIOLET $RB_RESET
     printf '          %s%s%s%s%s%s /____/%s                     %s\n' $RB_RED $RB_ORANGE $RB_YELLOW $RB_GREEN $RB_YELLOW $RB_GREEN $RB_VIOLET $RB_RESET
     printf '%s\n' "                                                ";
-    printf '%s\n' "Make sure you have MesloLGS NF Regular Nerd Font installed and set as your terminal font."
+    printf '%s\n' "Make sure you have MesloLGS NF Regular Nerd Font installed and set as your terminal font"
     printf '%s\n' "And you're running in your desired terminal"
     sleep 5
+    
     return 0
 }
 
@@ -59,30 +60,34 @@ setup_zsh_theme() {
     local theme="${1:-powerlevel10k/powerlevel10k}"
     sed -i "s/^ZSH_THEME=\".*\"/ZSH_THEME=\"$theme\"/" ~/.zshrc
     print_success "zsh theme changed to: $theme"
+    
     return 0
 }
 
 activate_zsh() {
     dots "Restarting zsh shell"
     source ~/.zshrc
+    
     return 0
 }
 
 install_oh_my_zsh() {
     dots "Installing ohmyzsh"
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    
     return 0
 }
 
 install_pl10k_theme() {
     dots "Installing powerlevel10k theme"
     git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
+
     return 0
 }
 
 finish_setup() {
     print_success "zsh setup complete!"
-    printf '%s\n' "Please restart your terminal to apply all changes."
+    printf '%s\n' "Please restart your terminal to apply all changes"
     printf '%s\n' "zsh installation by z.sh"
 }
 

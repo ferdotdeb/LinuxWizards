@@ -31,6 +31,8 @@ welcome() {
     printf "${ORANGE} ╚═════╝ ╚═╝   ╚═╝        ╚══╝╚══╝ ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ${RESET}\n";
     printf "${ORANGE}                                                                      ${RESET}\n";
     sleep 5
+
+    return 0
 }
 
 git_test() {
@@ -42,8 +44,8 @@ git_test() {
         printf '%s\n' "$git_version installed"
         return 0
     else
-        print_error "Git is not installed."
-        printf '%s\n' "Please install Git manually before running this script."
+        print_error "Git is not installed"
+        printf '%s\n' "Please install Git manually before running this script"
         exit 1
     fi
 }

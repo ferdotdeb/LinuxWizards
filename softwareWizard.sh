@@ -13,6 +13,8 @@ welcome() {
   printf "${BLUE}╚══════╝ ╚═════╝ ╚═╝        ╚═╝    ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝     ╚══╝╚══╝ ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ${RESET}\n";
   printf "${BLUE}                                                                                                                     ${RESET}\n";
   sleep 5
+
+  return 0
 }
 
 updating_system() {
@@ -58,10 +60,12 @@ install_agents() {
 
   dots "Installing Claude Code"
   curl -fsSL https://claude.ai/install.sh | bash
+
+  return 0
 }
 
 manual_links() {
-  printf '%s\n' "This software requires manual installation."
+  printf '%s\n' "This software requires manual installation"
   printf '%s\n' "Please visit the following links to download and install them:"
 
   printf '%s\n' "Node.js:"

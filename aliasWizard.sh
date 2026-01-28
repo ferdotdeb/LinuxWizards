@@ -21,6 +21,8 @@ welcome() {
     printf "${YELLOW}╚═╝  ╚═╝╚══════╝╚═╝╚═╝  ╚═╝╚══════╝     ╚══╝╚══╝ ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ${RESET}\n";
     printf "${YELLOW}                                                                                    ${RESET}\n";
     sleep 5
+
+    return 0
 }
 
 config_source() {
@@ -34,7 +36,7 @@ config_source() {
         RC_FILE="$HOME/.zshrc"
     else
         print_error "The $SHELL shell is unsupported"
-        printf '%s\n' "This script currently supports only bash and zsh shells."
+        printf '%s\n' "This script currently supports only bash and zsh shells"
         exit 1
     fi
 
@@ -66,8 +68,10 @@ detect_alias_file() {
             exit 1
         }
     else
-        print_warning "$ALIAS_FILE not found."
+        print_warning "$ALIAS_FILE not found"
+        exit 1
     fi
+    
     return 0
 }
 
@@ -108,6 +112,8 @@ add_bin(){
         }
         print_success "~/bin source block added to $RC_FILE file successfully!"
     fi
+    
+    return 0
 }
 
 finish_setup() {
