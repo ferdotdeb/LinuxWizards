@@ -186,7 +186,7 @@ agents_setup() {
         case "$ans" in
             1)
                 mkdir -p .claude/{agents,commands,skills/skill-example,rules}
-                touch -- CLAUDE.md CLAUDE.local.md .mcp.json
+                touch -- CLAUDE.local.md .mcp.json
                 touch -- .claude/rules/coding-style.md
                 ln -s AGENTS.md CLAUDE.md
 
