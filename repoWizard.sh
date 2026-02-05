@@ -189,12 +189,11 @@ agents_setup() {
                 touch -- CLAUDE.local.md .mcp.json
                 touch -- .claude/rules/coding-style.md
                 ln -s AGENTS.md CLAUDE.md
-
                 printf '%s\n' "# CODING STYLE.md" >> .claude/rules/coding-style.md
 
                 print_success "AGENTS.md created and linked to CLAUDE.md"
-                print_success ".claude directory created, including CLAUDE.md and rules subdirectory"
-                print_success "AI Agents support added to the repository"
+                print_success ".claude directory created, including CLAUDE.local.md and agents, commands, skills and rules subdirectories"
+                print_success "Now this repository has Claude agent support"
 
                 finish_setup
                 
@@ -207,6 +206,7 @@ agents_setup() {
                 touch -- .github/copilot-instructions.md
                 print_success "AGENTS.md and copilot-instructions.md files created"
                 print_success ".github directory created, including agents, instructions, prompt and skills directories"
+                print_success "Now this repository has GitHub Copilot agent support"
                 
                 finish_setup
                 
@@ -219,7 +219,7 @@ agents_setup() {
 
                 print_success "AGENTS.md created and linked to GEMINI.md"
                 print_success ".agent directory created with rules, workflows and skills subdirectories"
-
+                print_success "Now this repository has Google Antigravity agent support"
                 finish_setup
                 
                 return 0
@@ -229,6 +229,7 @@ agents_setup() {
                 touch -- .cursor/rules/coding-style.mdc .mcp.json .cursorindexingignore
                 print_success "AGENTS.md created"
                 print_success ".cursor directory created, including rules subdirectory"
+                print_success "Now this repository has Cursor agent support"
 
                 finish_setup
                 
@@ -240,7 +241,8 @@ agents_setup() {
                 print_success "AGENTS.md created"
                 printf '%s\n' "OpenCode recommends to add rules for the agent in the AGENTS.md file"
                 print_success ".opencode directory created, including agents, skills, commands and plugins directories"
-
+                print_success "Now this repository has OpenCode agent support"
+                
                 finish_setup
                 
                 return 0
