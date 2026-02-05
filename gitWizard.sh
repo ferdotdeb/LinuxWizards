@@ -73,14 +73,11 @@ git_email() {
 }
 
 ssh_password() {
-    printf '%s' "Create a password for your SSH key generation"
-
-    read -erp ssh_password
+    read -erp "Create a password for your SSH key generation: " ssh_password
 
     while [[ -z "$ssh_password" ]]; do
         print_error "Password cannot be empty"
-        printf '%s' "Enter your password for SSH key generation: "
-        read -erp ssh_password
+        read -erp "Enter your password for SSH key generation: " ssh_password
     done
 
     return 0
@@ -106,10 +103,7 @@ create_ssh_key() {
     eval "$(ssh-agent -s)"
     print_success "SSH agent started successfully!"
 
-    print_warning "In 5 seconds you will need to enter your SSH key passphrase"
-    sleep 5
-    read -erp "Please enter your SSH key passphrase: "
-
+    print_warning "You will need to enter your SSH key passphrase"
     dots "Adding SSH key to the SSH agent"
     ssh-add ~/.ssh/id_ed25519
     print_success "SSH key added to the SSH agent successfully!"
