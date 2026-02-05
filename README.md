@@ -80,6 +80,7 @@ A collection of powerful shell scripts to automate the setup and configuration o
 ### `common.sh`
 
 This is a utility script and should not be executed directly. It provides shared functions used by all other scripts including:
+
 - Color management with `NO_COLOR` support
 - Print helpers (`print_success`, `print_error`, `print_warning`)
 - Progress indicators (`dots`)
@@ -89,6 +90,7 @@ This is a utility script and should not be executed directly. It provides shared
 ### `softwareWizard.sh`
 
 This script automates the installation of essential software for developers. It performs the following tasks:
+
 - Updates system packages via APT
 - Installs essential packages: `vim`, `vlc`, `git`, `fastfetch`, `openssh-client`, `solaar`, `curl`, `wget`
 - Installs UV (modern Python package manager)
@@ -100,6 +102,7 @@ This script automates the installation of essential software for developers. It 
 ### `gitWizard.sh`
 
 This script streamlines your Git setup by performing the following:
+
 - Validates Git installation
 - Prompts for username and email (with email format validation)
 - Creates an ED25519 SSH key with passphrase protection
@@ -115,6 +118,7 @@ This script streamlines your Git setup by performing the following:
 ### `repoWizard.sh`
 
 This script automates the creation of new Git repositories with a standardized structure:
+
 - Initializes Git repository in specified directory
 - Creates basic files: `.gitignore`, `README.md`, `CONTRIBUTING.md`, `LICENSE`, `.env`, `.env.example`
 - Optional devcontainer setup with Docker directories and configuration files
@@ -126,6 +130,7 @@ This script automates the creation of new Git repositories with a standardized s
 ### `aliasWizard.sh`
 
 This script enhances terminal productivity by:
+
 - Detecting shell type (bash or zsh)
 - Copying `scripts/.aliases` to `~/.aliases`
 - Adding source block to `.bashrc` or `.zshrc` (idempotent)
@@ -137,6 +142,7 @@ This script enhances terminal productivity by:
 ### `debianWizard.sh`
 
 This script performs Debian-specific system configurations:
+
 - Sets timezone to America/Mexico_City (customizable)
 - Removes outdated LibreOffice APT packages
 - Configures Vim with line numbers
@@ -148,6 +154,7 @@ This script performs Debian-specific system configurations:
 ### `z.sh`
 
 This script sets up a modern zsh environment:
+
 - Adds Ghostty terminal configurations (if installed)
 - Sets custom dircolors for better visual contrast
 - Installs zsh shell
