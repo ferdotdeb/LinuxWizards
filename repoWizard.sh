@@ -94,7 +94,7 @@ basic_setup() {
     printf '%s\n' '.env' '.venv/' 'node_modules/' '*.log' '*.tmp' '.DS_Store' 'CLAUDE.local.md' >> .gitignore
 
     # Create basic directories
-    mkdir .vscode .github .github/{workflows,ISSUE_TEMPLATE}
+    mkdir -p .vscode .github .github/{workflows,ISSUE_TEMPLATE}
 
     # Create basic project files
     touch -- .env .env.example README.md CONTRIBUTING.md LICENSE .github/workflows/sample-workflow.yml .github/dependabot.yml .github/PULL_REQUEST_TEMPLATE.md
