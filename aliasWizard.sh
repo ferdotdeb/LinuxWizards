@@ -68,8 +68,7 @@ detect_alias_file() {
             exit 1
         }
     else
-        print_warning "$ALIAS_FILE not found"
-        exit 1
+        print_warning "$ALIAS_FILE not found, a new one will be created"
     fi
     
     return 0
