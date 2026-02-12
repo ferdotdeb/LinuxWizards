@@ -85,7 +85,7 @@ main() {
     setting_vim
     activate_bluetooth
     print_success "Configuration completed!"
-    printf '%s\n' "Debian basic configuration by softwareWizard.sh"
+    printf '%s\n' "Debian basic configuration by debianWizard.sh"
     
     return 0
 }
