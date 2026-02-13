@@ -1,23 +1,29 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# Source common functions file
-source ./common_functions.sh
-
-welcome() {
-    printf "${BLUE}                                                                                    ${RESET}\n";
-    printf "${BLUE} █████╗ ██╗     ██╗ █████╗ ███████╗    ██╗    ██╗██╗███████╗ █████╗ ██████╗ ██████╗ ${RESET}\n";
-    printf "${BLUE}██╔══██╗██║     ██║██╔══██╗██╔════╝    ██║    ██║██║╚══███╔╝██╔══██╗██╔══██╗██╔══██╗${RESET}\n";
-    printf "${BLUE}███████║██║     ██║███████║███████╗    ██║ █╗ ██║██║  ███╔╝ ███████║██████╔╝██║  ██║${RESET}\n";
-    printf "${BLUE}██╔══██║██║     ██║██╔══██║╚════██║    ██║███╗██║██║ ███╔╝  ██╔══██║██╔══██╗██║  ██║${RESET}\n";
-    printf "${BLUE}██║  ██║███████╗██║██║  ██║███████║    ╚███╔███╔╝██║███████╗██║  ██║██║  ██║██████╔╝${RESET}\n";
-    printf "${BLUE}╚═╝  ╚═╝╚══════╝╚═╝╚═╝  ╚═╝╚══════╝     ╚══╝╚══╝ ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ${RESET}\n";
-    printf "${BLUE}                                                                                    ${RESET}\n";
-    sleep 5
-}
+# Ensure this path is correct
+source ./common.sh
 
 ALIAS_SOURCE_BLOCK='if [[ -f ~/.aliases ]]; then
     . ~/.aliases
 fi'
+
+BIN_SOURCE_BLOCK='if [[ -d "$HOME/bin" ]] && [[ ":$PATH:" != *":$HOME/bin:"* ]]; then
+    export PATH="$HOME/bin:$PATH"
+fi'
+
+welcome() {
+    printf "${YELLOW}                                                                                    ${RESET}\n";
+    printf "${YELLOW} █████╗ ██╗     ██╗ █████╗ ███████╗    ██╗    ██╗██╗███████╗ █████╗ ██████╗ ██████╗ ${RESET}\n";
+    printf "${YELLOW}██╔══██╗██║     ██║██╔══██╗██╔════╝    ██║    ██║██║╚══███╔╝██╔══██╗██╔══██╗██╔══██╗${RESET}\n";
+    printf "${YELLOW}███████║██║     ██║███████║███████╗    ██║ █╗ ██║██║  ███╔╝ ███████║██████╔╝██║  ██║${RESET}\n";
+    printf "${YELLOW}██╔══██║██║     ██║██╔══██║╚════██║    ██║███╗██║██║ ███╔╝  ██╔══██║██╔══██╗██║  ██║${RESET}\n";
+    printf "${YELLOW}██║  ██║███████╗██║██║  ██║███████║    ╚███╔███╔╝██║███████╗██║  ██║██║  ██║██████╔╝${RESET}\n";
+    printf "${YELLOW}╚═╝  ╚═╝╚══════╝╚═╝╚═╝  ╚═╝╚══════╝     ╚══╝╚══╝ ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ${RESET}\n";
+    printf "${YELLOW}                                                                                    ${RESET}\n";
+    sleep 5
+
+    return 0
+}
 
 config_source() {
     dots "Searching for your current shell"
@@ -30,7 +36,7 @@ config_source() {
         RC_FILE="$HOME/.zshrc"
     else
         print_error "The $SHELL shell is unsupported"
-        printf '%s\n' "This script currently supports only bash and zsh shells."
+        printf '%s\n' "This script currently supports only bash and zsh shells"
         exit 1
     fi
 
@@ -55,171 +61,67 @@ detect_alias_file() {
 
     if [[ -f "$ALIAS_FILE" ]]; then
         print_success "$ALIAS_FILE already exists"
+        dots "Updating $ALIAS_FILE"
+
+        rm -f "$ALIAS_FILE" || {
+            print_error "Failed to update existing $ALIAS_FILE"
+            exit 1
+        }
     else
-        print_error "$ALIAS_FILE not found."
-        dots "Creating $ALIAS_FILE file"
-        touch "$ALIAS_FILE" || { printf '%s\n' "Failed to create $ALIAS_FILE" && exit 1; }
-        print_success "File $ALIAS_FILE created."
+        print_warning "$ALIAS_FILE not found, a new one will be created"
     fi
+    
     return 0
 }
 
 setup_aliases() {
-    dots "Applying alias to .aliases file"
+    dots "Copying .aliases file"
     dots "You can see the list of all aliases documented in the README file"
     
-    # Add each alias to the detected config file if it does not already exist
-    # Using a here-document for bash
-    while IFS= read -r alias_line; do
-        if [[ -n "$alias_line" ]] && ! grep -qF "$alias_line" "$ALIAS_FILE" 2>/dev/null; then
-            printf '%s\n' "$alias_line" >> "$ALIAS_FILE"
-        fi
-    done << 'EOF'
-# Navigation
-alias ls='ls --color=auto'
-alias ll='ls -la'
-alias la='ls -A'
-alias l='ls -CF'
-alias lf='ls -alF'
-alias lh='ls -laFh'
-alias sls='ls -lavh'
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-alias ch='cd ~'
-alias dir='dir --color=auto'
-alias vdir='vdir --color=auto'
-alias grep='grep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias egrep='egrep --color=auto'
-# APT shortcuts
-alias upg='sudo apt update && sudo apt upgrade -y'
-alias install='sudo apt install'
-alias remove='sudo apt remove'
-alias clean='sudo apt autoremove && sudo apt autoclean && sudo apt clean'
-# System shortcuts
-alias cls='clear'
-alias python='python3'
-alias ff='fastfetch'
-alias shutdown='systemctl poweroff'
-alias reboot='systemctl reboot'
-alias rerun='sudo !!' 
-alias status='sudo systemctl status'
-alias start='sudo systemctl start'
-alias stop='sudo systemctl stop'
-alias restart='sudo systemctl restart'
-alias srm='sudo rm -rf'
-alias rm='rm -iv --preserve-root'
-alias cp='cp -iv'
-alias mv='mv -iv'
-alias ln='ln -iv'
-alias srczsh='source ~/.zshrc'
-alias srcbash='source ~/.bashrc'
-alias c='code .'
-alias code='code .'
-alias cursor='cursor .'
-# Docker shortcuts
-alias dc='docker'
-alias dcu='docker compose up -d'
-alias dci='docker images'
-alias dcps='docker ps'
-alias dcrm='docker rm'
-alias dcrmi='docker rmi'
-alias dockerclean='docker system prune -a --volumes'
-# Kubernetes shortcuts
-alias kc='kubectl'
-alias mc='minikube'
-alias kcgp='kubectl get pods'
-alias kcgpw='kubectl get pods -o wide'
-# Git shortcuts
-alias gi='git init .'
-alias ga='git add'
-alias gc='git commit -m'
-alias gp='git push'
-alias autocommit='read -e -p "Commit message: " msg && git add . && git commit -m "$msg"'
-alias autopush='read -e -p "Commit message: " msg && git add . && git commit -m "$msg" && git push'
-alias gpl='git pull'
-alias gsw='git switch'
-alias gsc='git switch -c'
-alias glg='git log'
-alias gitgraph='git log --oneline --graph --decorate --all'
-alias gitlast='git log -1 HEAD'
-alias gs='git status'
-alias gss='git status -sb'
-alias gb='git branch'
-alias gbd='git branch -d'
-alias gba='git branch -a'
-alias gmg='git merge'
-alias gco='git checkout'
-alias gcl='git clone'
-alias gdf='git diff'
-alias gst='git stash'
-alias grs='git reset --soft'
-alias grh='git reset --hard'
-alias gitundo='git reset --soft HEAD~1'
-alias gitunstage='git reset HEAD --'
-alias gitrepair='sudo chown -R "$(whoami)":"$(id -gn)" .git'
-alias gitclean='git fetch origin --prune'
-# Miscellaneous
-alias h='history'
-alias rootrc='code .bashrc --no-sandbox --user-data-dir'
-alias rootzrc='code .zshrc --no-sandbox --user-data-dir'
-alias rootaliases='code .aliases --no-sandbox --user-data-dir'
-# Execute files more easily
-run() {
-  if [[ "$#" -eq 0 ]]; then
-    printf '%s\n' "You must provide at least one argument."
-    printf '%s\n' "Example: run fileToExecute.sh"
-    return 1
-  fi
+    cp scripts/.aliases $HOME/.aliases || {
+        print_error "Failed to copy aliases to the home directory"
+        dots "Exiting"
+        exit 1
+    }
 
-  case $1 in
-    *[!/]*)
-      # Don't contain "/", use ./fileToExecute.sh
-      cmd=./$1
-      ;;
-    *)
-      # Already contains "/", use as is (./fileToExecute.sh, dir/fileToExecute.sh, /path/fileToExecute.sh)
-      cmd=$1
-      ;;
-  esac
-
-  shift
-  "$cmd" "$@"
+    return 0
 }
-# Make files executable more easily
-mkrun() {
-    if [[ "$#" -eq 0 ]]; then
-        printf '%s\n' "You must provide at least one argument."
-        printf '%s\n' "Example: mkrun script.sh"
-        return 1
+
+add_bin(){
+    mkdir -p ~/bin
+
+    cp scripts/mkrun ~/bin/mkrun
+    cp scripts/run ~/bin/run
+    cp scripts/autocommit ~/bin/autocommit
+    cp scripts/autopush ~/bin/autopush
+
+    chmod +x ~/bin/mkrun
+    chmod +x ~/bin/run
+    chmod +x ~/bin/autocommit
+    chmod +x ~/bin/autopush
+    
+    if grep -qF "if [[ -d "$HOME/bin" ]] && [[ ":$PATH:" != *":$HOME/bin:"* ]]; then" "$RC_FILE" 2>/dev/null; then
+        print_success "~/bin source block already exists in $RC_FILE file"
+    else
+        dots "Adding ~/bin source block to $RC_FILE file"
+        # Append the BIN_SOURCE_BLOCK to the RC_FILE
+        printf '\n%s\n' "$BIN_SOURCE_BLOCK" >> "$RC_FILE" || {
+            print_error "Failed to add ~/bin source block to $RC_FILE file"
+            exit 1
+        }
+        print_success "~/bin source block added to $RC_FILE file successfully!"
     fi
-
-    for f in "$@"; do
-        case $f in
-            */*)
-                # Ya trae ruta: ./script.sh, scripts/a.sh, /ruta/b.sh
-                target=$f
-                ;;
-            *)
-                # Solo nombre → asumimos ./nombre
-                target=./$f
-                ;;
-        esac
-        chmod +x "$target"
-    done
-} # End of alias definitions
-EOF
-
+    
     return 0
 }
 
 finish_setup() {
     print_success "Aliases configured successfully!"
-    dots "Reloading $ALIAS_FILE to activate aliases"
-    source "$ALIAS_FILE"
-    print_success "Aliases activated successfully with aliasWizard"
+    dots "Reloading $RC_FILE to activate aliases"
+    source "$RC_FILE"
     printf '%s\n' "Please restart your terminal"
+    printf '%s\n' "Aliases activated successfully with aliasWizard"
+
     return 0
 }
 
@@ -229,6 +131,7 @@ main() {
     config_source
     detect_alias_file
     setup_aliases
+    add_bin
     finish_setup
     
     return 0

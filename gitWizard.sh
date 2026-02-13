@@ -1,6 +1,20 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-source ./common_functions.sh  # Ensure this path is correct
+# Ensure this path is correct
+source ./common.sh
+
+# Regex for email validation function
+validate_email() {
+    local email="$1"
+    local regex="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    
+    if [[ $email =~ $regex ]]; then
+        return 0
+    else
+        print_error "Invalid email format"
+        return 0
+    fi
+}
 
 # Global variables
 git_username=""
@@ -17,109 +31,66 @@ welcome() {
     printf "${ORANGE} ╚═════╝ ╚═╝   ╚═╝        ╚══╝╚══╝ ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ${RESET}\n";
     printf "${ORANGE}                                                                      ${RESET}\n";
     sleep 5
+
+    return 0
 }
 
-test_git() {
-    dots "Checking if Git is installed"
+git_test() {
+    dots "Checking if git is installed"
 
     if command_exists git; then
         print_success "Git is already installed"
-        git_version=$(git --version 2>/dev/null | sed -n 's/.*version \([0-9][0-9.]*\).*/\1/p')
-        printf '%s\n' "Git version: $git_version"
-        sleep 3
+        git_version=$(git --version)
+        printf '%s\n' "$git_version installed"
         return 0
     else
-        print_error "Git is not installed."
-        printf '%s\n' "Please install Git manually before running this script."
+        print_error "Git is not installed"
+        printf '%s\n' "Please install Git manually before running this script"
         exit 1
     fi
 }
 
-# Regex for email validation function
-validate_email() {
-    local email="$1"
-    local regex="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-    # Use bash regex matching
-    if [[ $email =~ $regex ]]; then
-        return 0
-    else
-        print_error "Invalid email format"
-        exit 1
-    fi
-}
+git_username () {
+    read -erp "Enter your username for git: " git_username
 
-# Obtaining user info
-collect_user_info() {
-    printf '%s\n' "Please enter your personal information for Git configuration"
-    
-    # Get Git username
-    read -erp "Enter your full name for Git installation: " git_username
     while [[ -z "$git_username" ]]; do
         print_error "The name cannot be empty"
-        read -erp "Enter your full name for Git installation: " git_username
+        read -erp "Enter your username for git: " git_username
     done
+
+    return 0
+}
+
+git_email() {
+    read -erp "Enter the email address for your git user: " git_email
     
-    # Get Git email with validation
-    read -erp "Enter your email for Git installation: " git_email
     while ! validate_email "$git_email"; do
         print_error "Please enter a valid email address"
-        read -erp "Enter your email for Git installation: " git_email
+        read -erp "Enter the email address for your git user: " git_email
     done
-    
-    # Get SSH password
-    printf '%s' "Enter your password for SSH key generation: "
-    stty -echo
-    read -r ssh_password
-    stty echo
-    printf '\n'
-    
+
+    return 0
+}
+
+ssh_password() {
+    read -erp "Create a password for your SSH key generation: " ssh_password
+
     while [[ -z "$ssh_password" ]]; do
         print_error "Password cannot be empty"
-        printf '%s' "Enter your password for SSH key generation: "
-        stty -echo
-        read -r ssh_password
-        stty echo
-        printf '\n'
+        read -erp "Enter your password for SSH key generation: " ssh_password
     done
 
-    print_success "Git user information collected successfully!"
     return 0
 }
 
-# Setting git global configs
-set_git_global_configs() {
-    dots "Setting Git global configurations"
-    git config --global init.defaultBranch main
-    git config --global user.name "$git_username"
-    git config --global user.email "$git_email"
-    git config --global pull.rebase false
-    git config --global push.autoSetupRemote true
-    git config --global core.editor "nano"
-    git config --global gpg.format ssh
-    git config --global user.signingkey ~/.ssh/id_ed25519.pub
-    git config --global commit.gpgsign true
-    git config --global tag.gpgSign true
-
-    printf '%s\n' "Git global configurations:"
-    printf "Name: %s\n" "$git_username"
-    printf "Email: %s\n" "$git_email"
-    printf '%s\n' "Default branch: main"
-    printf '%s\n' "Pull strategy: merge (no rebase)"
-    print_success "Push auto-setup enabled"
-    printf '%s\n' "Default editor: nano"
-    print_success "GPG commit signing enabled with SSH key"
-
-    print_success "Git global configurations set successfully!"
-    return 0
-}
-
-# Creating SSH Keys
 create_ssh_key() {
     dots "Setting up SSH key"
 
     # Creating SSH key
     ssh-keygen -t ed25519 -C "$git_email" -f ~/.ssh/id_ed25519 -N "$ssh_password" -q
     print_success "SSH key created successfully!"
+
+    cd ~/.ssh
     
     # Set proper permissions for SSH keys
     dots "Setting permissions for SSH keys"
@@ -127,17 +98,12 @@ create_ssh_key() {
     chmod 644 ~/.ssh/id_ed25519.pub
     print_success "SSH key permissions set successfully!"
 
-    cd ~/.ssh
-
     # Start SSH agent and source its environment
     dots "Starting SSH agent"
     eval "$(ssh-agent -s)"
     print_success "SSH agent started successfully!"
 
-    print_warning "In 10 seconds you will need to enter your SSH key passphrase"
-    sleep 10
-    read -erp "Please enter your SSH key passphrase (if any):"
-
+    print_warning "You will need to enter your SSH key passphrase"
     dots "Adding SSH key to the SSH agent"
     ssh-add ~/.ssh/id_ed25519
     print_success "SSH key added to the SSH agent successfully!"
@@ -153,15 +119,63 @@ create_ssh_key() {
     return 0
 }
 
-# Main execution
+git_configs() {
+    dots "Setting Git global configurations"
+    
+    git config --global init.defaultBranch main
+    git config --global user.name "$git_username"
+    git config --global user.email "$git_email"
+    git config --global pull.rebase false
+    git config --global push.autoSetupRemote true
+    git config --global core.editor "nano"
+    
+    if [ -f ~/.ssh/id_ed25519.pub ]; then
+        git config --global gpg.format ssh
+        git config --global user.signingkey "$(realpath ~/.ssh/id_ed25519.pub)"
+        git config --global commit.gpgsign true
+        git config --global tag.gpgSign true
+    else
+        print_warning "No SSH key found, skipping commit signing"
+    fi
+
+    git config --global pull.ff only
+    git config --global merge.conflictStyle zdiff3
+    git config --global diff.colorMoved default
+
+    return 0
+}
+
+finish_setup () {
+    printf '%s\n' "Git global configurations:"
+    printf "Name: %s\n" "$git_username"
+    printf "Email: %s\n" "$git_email"
+    printf '%s\n' "Default branch: main"
+    printf '%s\n' "Pull strategy: merge (no rebase)"
+    printf '%s\n' "Push autoSetupRemote enabled (No origin branch required)"
+    printf '%s\n' "Default editor: nano"
+
+    if [ -f ~/.ssh/id_ed25519.pub ]; then
+    print_success "GPG commit signing enabled with SSH key"
+    else
+        print_error "Commit signing NOT enabled"
+    fi    
+
+    print_success "Git configured successfully!"
+    printf '%s\n' "Git configuration by GitWizard"
+    
+    return 0
+}
+ 
 main() {
     welcome
-    test_git
-    collect_user_info
-    set_git_global_configs
+    git_test
+    git_username
+    git_email
+    ssh_password
     create_ssh_key
-    printf '%s\n' "Git configuration powered by gitWizard"
-    
+    git_configs
+    finish_setup
+
     return 0
 }
 

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # These are common functions across scripts
 
@@ -11,6 +11,7 @@ fi
 
 BLUE='\033[0;34m'
 ORANGE='\033[38;5;208m'
+YELLOW='\033[0;33m'
 RESET='\033[0m'
 RB_RED=$(printf '\033[38;5;196m')
 RB_ORANGE=$(printf '\033[38;5;202m')
@@ -82,4 +83,8 @@ dots() {
         (( i++ ))
     done
     printf '\n'
+}
+
+print_link() {
+    printf '\e]8;;%s\e\\%s\e]8;;\e\\\n' "$1" "$1"
 }

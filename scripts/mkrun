@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+if [[ "$#" -eq 0 ]]; then
+    printf '%s\n' "You must provide at least one argument."
+    printf '%s\n' "Example: mkrun script.sh"
+    exit 1
+fi
+
+for f in "$@"; do
+    case $f in
+        */*)
+            target=$f
+            ;;
+        *)
+            target=./$f
+            ;;
+    esac
+    chmod +x "$target"
+done

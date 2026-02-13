@@ -1,93 +1,150 @@
 # AGENTS.md
 
-This file provides guidance to AI agents (including Claude Code) when working with code in this repository.
+Guidance for agentic coding tools working in this repository.
 
 ## Repository Overview
+LinuxWizards is a collection of Bash scripts that automate Linux environment setup for developers.
+Scripts aim for POSIX compatibility where possible but use Bash features and are run from the repo root.
 
-LinuxWizards is a collection of bash scripts that automate Linux environment setup for developers. All scripts are designed to be POSIX-compliant where possible, with some bash-specific features for enhanced functionality.
+## Goals for Agents
+- Make minimal, targeted changes that follow existing script structure and messaging.
+- Preserve interactive flow, prompts, and user-facing output.
+- Prefer updates that are safe for repeat runs.
 
-## Architecture
+## Layout
+- `common.sh`: shared helpers (colors, print_message, print_success/error/warning, dots, command_exists, print_link).
+- `*.sh` in repo root: main wizard scripts.
+- `scripts/`: helper executables and the `.aliases` file copied by `aliasWizard.sh`.
+- `README.md`: user-facing usage and alias reference.
+- `CLAUDE.md`: legacy duplicate guidance; treat `AGENTS.md` as source of truth.
 
-### Core Pattern: Common Functions + Specialized Scripts
+## Script Structure Pattern
+1. `#!/usr/bin/env bash`
+2. `source ./common.sh`
+3. `welcome()` banner with colors and a 5-second pause
+4. Helper functions for the script's tasks
+5. `main()` orchestrates the flow
+6. Call `main` at the end
 
-All wizard scripts follow this structure:
+## Common Helpers (common.sh)
+- Color constants and `NO_COLOR` handling; disables colors when not a TTY.
+- `print_message`, `print_success`, `print_error`, `print_warning` for consistent output.
+- `command_exists` for dependency checks.
+- `dots` for progress indicators, with optional `DOTS_COUNT` and `DOTS_DELAY`.
+- `print_link` for clickable terminal links (OSC 8).
 
-1. **Source common functions**: `source ./common_functions.sh` at the top
-2. **Define welcome banner**: ASCII art banner with colored output
-3. **Implement specialized functions**: Feature-specific logic
-4. **Main execution**: `main()` function that orchestrates the workflow
-5. **Run main**: Call `main` at the end
-
-### common_functions.sh - Shared Utilities
-
-The foundation that all scripts depend on. Provides:
-
-- **Color management**: Rainbow colors (RB_*) and standard colors with NO_COLOR support
-- **Print helpers**: `print_success()`, `print_error()`, `print_warning()`
-- **Utility functions**:
-  - `command_exists()` - Check if a command is available
-  - `dots()` - Visual loading indicator with customizable count/delay
-  - `print_message()` - Core colored message printer
-- **Terminal sanity**: TTY detection and stty configuration for proper input handling
-
-Scripts must check for TTY before using interactive features (colors, delays).
-
-### Script Responsibilities
-
-**softwareWizard.sh**: Installs APT packages and third-party apps (Chrome, VS Code). Requires sudo/root privileges.
-
-**gitWizard.sh**: Configures Git globals and generates ED25519 SSH keys with GPG signing. Validates email format with regex.
-
-**aliasWizard.sh**: Sets up shell aliases by:
-- Detecting bash/zsh from $SHELL
-- Creating/updating ~/.aliases
-- Injecting source block into RC file
-- Using heredoc to define aliases (prevents duplication with grep -qF)
-
-**repoWizard.sh**: Initializes Git repositories with:
-- Standard files: README.md, AGENTS.md, LICENSE, .env, .env.example
-- Optional devcontainer setup (Docker, .devcontainer, .vscode)
-- Two-branch strategy: initial commit on main, then switch to dev
-- Uses `git init .` and commits with emoji: "🎉 Project created!"
+## Script Responsibilities
+- `softwareWizard.sh`: apt updates and installs, plus manual install links (requires sudo).
+- `gitWizard.sh`: global git config and SSH key creation.
+- `aliasWizard.sh`: manages `~/.aliases`, updates shell rc, and installs helper scripts to `~/bin`.
+- `repoWizard.sh`: creates repo scaffolding and performs initial commit.
+- `debianWizard.sh`: Debian system setup tasks (requires sudo).
+- `z.sh`: zsh/oh-my-zsh/powerlevel10k setup.
+- `test.sh`: small demo of `print_link` output.
 
 ## Running Scripts
+- Run from the repo root so `./common.sh` resolves correctly.
+- Make executable: `chmod +x scriptName.sh`.
+- Execute: `./scriptName.sh`.
+- Expect interactive prompts; most scripts are not meant for non-interactive use.
+- `softwareWizard.sh` and `debianWizard.sh` require sudo or root.
 
-All scripts must be:
-1. Made executable: `chmod +x scriptName.sh`
-2. Run from the repository root: `./scriptName.sh`
-3. Have access to `common_functions.sh` in the same directory
+## Environment and Privileges
+- Most scripts assume Debian or Ubuntu tooling (apt, systemctl, timedatectl).
+- Network access is required for downloads (curl, git clone).
+- `debianWizard.sh` re-execs with sudo when not root.
+- Avoid running these scripts in CI without explicit safeguards.
 
-**Important**: Scripts source common_functions.sh with relative path `./common_functions.sh`, so they must be executed from the directory containing both files.
+## Script-Specific Notes
+- `aliasWizard.sh` copies `scripts/.aliases` to `~/.aliases`; keep README alias docs in sync.
+- `aliasWizard.sh` adds source blocks to `.bashrc` or `.zshrc` using `grep -qF` for idempotency.
+- `aliasWizard.sh` installs `scripts/run`, `scripts/mkrun`, `scripts/autocommit`, `scripts/autopush` to `~/bin`.
+- `gitWizard.sh` writes SSH keys under `~/.ssh`; do not print or log secrets.
+- `softwareWizard.sh` installs `uv` and agent tools via curl; keep links in `manual_links()` up to date.
+- `z.sh` writes `~/.dircolors` and may append to Ghostty config; ensure parent dirs exist.
+- `repoWizard.sh` writes scaffold files and .gitignore entries; keep defaults consistent.
 
-## Code Style
+## Build / Lint / Test
+Build:
+- No build step; scripts are executed directly.
 
-- Use `printf` instead of `echo` for consistent output
-- Quote variables: `"$variable"` not `$variable`
-- Use bash built-ins over external commands where possible
-- Color escapes: `printf '%b%s%b\n' "$color" "$message" "$NC"`
-- Regex matching: Use bash `[[ $var =~ regex ]]` pattern
-- Input reading: `read -erp "prompt: " variable` (with readline editing)
-- Password input: `stty -echo; read -r password; stty echo`
+Lint (optional, if tools installed):
+- All scripts: `shellcheck *.sh scripts/*`.
+- Single file: `shellcheck gitWizard.sh`.
+- Syntax-only: `bash -n gitWizard.sh`.
 
-## User Interaction Patterns
+Format:
+- No enforced formatter. If you use `shfmt`, keep the existing indentation in the file you touch.
 
-- Validate required inputs in loops until correct
-- Use `[Yy]*|""` pattern to make "Yes" the default on confirmations
-- Display success/error messages after each operation
-- Show version info after detecting installed software
-- Use 5-second sleep after welcome banners for readability
+Tests:
+- No automated tests in this repo.
+- Manual smoke test: run the target script from the repo root (example: `./aliasWizard.sh`).
+- Single-test equivalent: `bash -n path/to/script.sh` or `shellcheck path/to/script.sh`.
 
-## Git Standards in This Repo
+## Code Style Guidelines (Bash)
 
-- Default branch: main
-- Emoji commits are used (see repoWizard.sh commit messages)
-- GPG signing: Configured to use SSH keys (gpg.format = ssh)
-- Auto-setup remote on push: `push.autoSetupRemote = true`
+Imports and structure:
+- Always `source ./common.sh` near the top; do not change the relative path.
+- Keep shared logic in `common.sh` rather than duplicating helpers.
+- End scripts with a `main` function call.
 
-## File Creation Standards
+Formatting:
+- Use `printf` instead of `echo` for consistent output.
+- Quote variables and expansions: `"$var"`, `"$@"`.
+- Prefer `[[ ... ]]` and `case` where already in use.
+- Use `local` for function-scoped variables.
+- Keep blank lines between top-level functions.
+- Preserve existing indentation and wrapping in the file you edit.
 
-When creating repos with repoWizard.sh:
-- AGENTS.md is the standard (not CLAUDE.md)
-- Initial .gitignore includes: .env, .venv/, node_modules/, *.log, *.tmp, .DS_Store
-- Initial .dockerignore includes: .git/, .devcontainer/, .vscode/, README.md, AGENTS.md, LICENSE
-- devcontainer structure: docker/dev/, docker/prod/, .devcontainer/, .vscode/
+Naming and types:
+- Functions use lower_snake_case verbs (`install_packages`, `git_test`).
+- Globals use lower_snake_case; constants and env vars use UPPER_SNAKE_CASE.
+- Keep types simple (strings, integers); avoid arrays unless needed.
+
+User interaction:
+- Use `read -erp "Prompt: " var` for prompts.
+- Validate required input in loops; default yes with `[Yy]*|""`.
+- Use `print_success`, `print_error`, and `print_warning` for status output.
+- Use `dots` before long-running commands.
+- Keep the 5-second pause after welcome banners for readability.
+- `common.sh` handles colors based on TTY and `NO_COLOR`.
+
+Error handling:
+- Prefer explicit checks: `if ! command; then ...; return 1; fi`.
+- Use `cmd || { print_error "..."; exit 1; }` for fatal failures.
+- Avoid `set -e` in wizard scripts unless the whole script is designed for it.
+- Use `return 0` for success; return non-zero on failure.
+
+External commands and safety:
+- Prefer bash built-ins over external commands when practical.
+- Quote paths and use `--` before path arguments where supported.
+- Avoid destructive commands without user confirmation.
+
+Files and paths:
+- Use absolute paths when writing to user locations (`$HOME`, `~/.ssh`).
+- Expand `~` using parameter expansion when needed (`${var/#\~/$HOME}`).
+- Use `mkdir -p` and check write permissions before creating files.
+
+Output and logging:
+- Keep user-facing messages short and actionable.
+- Prefer `print_*` helpers for consistency and color handling.
+- When printing links, use `print_link` for clickable output.
+
+Security and secrets:
+- Do not print passwords or passphrases to the terminal.
+- Never write secrets to tracked files without explicit user request.
+- Keep SSH keys under `~/.ssh` and ensure permissions are locked down.
+
+Documentation updates:
+- Update `README.md` when changing user-facing behavior or aliases.
+- Keep alias lists in `scripts/.aliases` and README in sync.
+
+## Repo Standards
+- Default git branch is `main`.
+- `repoWizard.sh` performs an initial commit and switches to `dev`.
+- Git settings in `gitWizard.sh` use SSH-based signing when available.
+- `repoWizard.sh` scaffolding writes `.gitignore` and `.dockerignore` with standard entries.
+- Devcontainer layout (when opted in): `docker/dev`, `docker/prod`, `.devcontainer`, `.vscode`.
+
+## Cursor/Copilot Rules
+- No `.cursor/rules/`, `.cursorrules`, or `.github/copilot-instructions.md` files exist in this repo.
