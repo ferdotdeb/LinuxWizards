@@ -204,7 +204,6 @@ agents_setup() {
                 return 0
                 ;;
             2)
-                touch -- .github/copilot-instructions.md
                 ln -s ../.agents/rules .github/rules
                 ln -s ../.agents/skills .github/skills
                 ln -s ../.agents/agents .github/agents
@@ -214,7 +213,9 @@ agents_setup() {
                 ln -s ../.agents/instructions .github/instructions
                 ln -s ../.agents/prompts .github/prompts
 
-                print_success "AGENTS.md and copilot-instructions.md files created"
+                ln -s AGENTS.md .github/copilot-instructions.md
+
+                print_success "AGENTS.md created and linked to copilot-instructions.md"
                 print_success ".github directory created, including rules, skills, agents, commands, workflows, plugins, instructions and prompts directories symlinked from .agents"
                 print_success "Now this repository has GitHub Copilot agent support"
                 
