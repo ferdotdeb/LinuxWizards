@@ -1,29 +1,10 @@
 #!/usr/bin/env bash
 
 # Ensure this path is correct
-source ./common.sh
+source ./src/common.sh
+source ./src/welcome_functions/software.sh
 
-welcome() {
-  printf "${BLUE}                                                                                                                     ${RESET}\n";
-  printf "${BLUE}███████╗ ██████╗ ███████╗████████╗██╗    ██╗ █████╗ ██████╗ ███████╗    ██╗    ██╗██╗███████╗ █████╗ ██████╗ ██████╗ ${RESET}\n";
-  printf "${BLUE}██╔════╝██╔═══██╗██╔════╝╚══██╔══╝██║    ██║██╔══██╗██╔══██╗██╔════╝    ██║    ██║██║╚══███╔╝██╔══██╗██╔══██╗██╔══██╗${RESET}\n";
-  printf "${BLUE}███████╗██║   ██║█████╗     ██║   ██║ █╗ ██║███████║██████╔╝█████╗      ██║ █╗ ██║██║  ███╔╝ ███████║██████╔╝██║  ██║${RESET}\n";
-  printf "${BLUE}╚════██║██║   ██║██╔══╝     ██║   ██║███╗██║██╔══██║██╔══██╗██╔══╝      ██║███╗██║██║ ███╔╝  ██╔══██║██╔══██╗██║  ██║${RESET}\n";
-  printf "${BLUE}███████║╚██████╔╝██║        ██║   ╚███╔███╔╝██║  ██║██║  ██║███████╗    ╚███╔███╔╝██║███████╗██║  ██║██║  ██║██████╔╝${RESET}\n";
-  printf "${BLUE}╚══════╝ ╚═════╝ ╚═╝        ╚═╝    ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝     ╚══╝╚══╝ ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ${RESET}\n";
-  printf "${BLUE}                                                                                                                     ${RESET}\n";
-  sleep 5
-
-  return 0
-}
-
-updating_system() {
-  dots "Updating system packages..."
-  sudo apt-get update && sudo apt-get upgrade -y
-  print_success "System packages updated!"
-  
-  return 0
-}
+update_system
 
 install_packages() {
   dots "Installing essential APT packages"
@@ -94,7 +75,7 @@ manual_links() {
 # Main execution
 main() {
   welcome
-  updating_system
+  update_system
   install_packages
   install_uv
   install_agents

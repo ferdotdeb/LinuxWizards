@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# Ensure this path is correct
-source ./common.sh
+source ./src/common.sh
+source ./src/welcome_functions/alias.sh
 
 ALIAS_SOURCE_BLOCK='if [[ -f ~/.aliases ]]; then
     . ~/.aliases
@@ -10,20 +10,6 @@ fi'
 BIN_SOURCE_BLOCK='if [[ -d "$HOME/bin" ]] && [[ ":$PATH:" != *":$HOME/bin:"* ]]; then
     export PATH="$HOME/bin:$PATH"
 fi'
-
-welcome() {
-    printf "${YELLOW}                                                                                    ${RESET}\n";
-    printf "${YELLOW} █████╗ ██╗     ██╗ █████╗ ███████╗    ██╗    ██╗██╗███████╗ █████╗ ██████╗ ██████╗ ${RESET}\n";
-    printf "${YELLOW}██╔══██╗██║     ██║██╔══██╗██╔════╝    ██║    ██║██║╚══███╔╝██╔══██╗██╔══██╗██╔══██╗${RESET}\n";
-    printf "${YELLOW}███████║██║     ██║███████║███████╗    ██║ █╗ ██║██║  ███╔╝ ███████║██████╔╝██║  ██║${RESET}\n";
-    printf "${YELLOW}██╔══██║██║     ██║██╔══██║╚════██║    ██║███╗██║██║ ███╔╝  ██╔══██║██╔══██╗██║  ██║${RESET}\n";
-    printf "${YELLOW}██║  ██║███████╗██║██║  ██║███████║    ╚███╔███╔╝██║███████╗██║  ██║██║  ██║██████╔╝${RESET}\n";
-    printf "${YELLOW}╚═╝  ╚═╝╚══════╝╚═╝╚═╝  ╚═╝╚══════╝     ╚══╝╚══╝ ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ${RESET}\n";
-    printf "${YELLOW}                                                                                    ${RESET}\n";
-    sleep 5
-
-    return 0
-}
 
 config_source() {
     dots "Searching for your current shell"

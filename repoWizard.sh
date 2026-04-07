@@ -1,40 +1,7 @@
 #!/usr/bin/env bash
 
-# Ensure this path is correct
 source ./common.sh
-
-welcome() {
-    printf "${BLUE}                                                                                  ${RESET}\n";
-    printf "${BLUE}██████╗ ███████╗██████╗  ██████╗     ██╗    ██╗██╗███████╗ █████╗ ██████╗ ██████╗ ${RESET}\n";
-    printf "${BLUE}██╔══██╗██╔════╝██╔══██╗██╔═══██╗    ██║    ██║██║╚══███╔╝██╔══██╗██╔══██╗██╔══██╗${RESET}\n";
-    printf "${BLUE}██████╔╝█████╗  ██████╔╝██║   ██║    ██║ █╗ ██║██║  ███╔╝ ███████║██████╔╝██║  ██║${RESET}\n";
-    printf "${BLUE}██╔══██╗██╔══╝  ██╔═══╝ ██║   ██║    ██║███╗██║██║ ███╔╝  ██╔══██║██╔══██╗██║  ██║${RESET}\n";
-    printf "${BLUE}██║  ██║███████╗██║     ╚██████╔╝    ╚███╔███╔╝██║███████╗██║  ██║██║  ██║██████╔╝${RESET}\n";
-    printf "${BLUE}╚═╝  ╚═╝╚══════╝╚═╝      ╚═════╝      ╚══╝╚══╝ ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ${RESET}\n";
-    printf "${BLUE}                                                                                  ${RESET}\n";
-    sleep 5
-    
-    return 0
-}
-
-git_test() {
-    dots "Checking if git is installed"
-
-    if command_exists git; then
-        print_success "Git is already installed"
-        git_version=$(git --version)
-        printf '%s\n' "$git_version installed"
-
-        return 0
-    else
-        print_error "Git is not installed."
-        printf '%s\n' "Please install Git manually before running this script."
-        
-        exit 1
-    fi
-
-    return 0
-}
+source ./src/welcome_functions/repo.sh
 
 new_repo() {
     # 1) Ask for the target directory, default to current

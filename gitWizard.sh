@@ -1,54 +1,12 @@
 #!/usr/bin/env bash
 
-# Ensure this path is correct
-source ./common.sh
-
-# Regex for email validation function
-validate_email() {
-    local email="$1"
-    local regex="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-    
-    if [[ $email =~ $regex ]]; then
-        return 0
-    else
-        print_error "Invalid email format"
-        return 0
-    fi
-}
+source ./src/common.sh
+source ./src/welcome_functions/git.sh
 
 # Global variables
 git_username=""
 git_email=""
 ssh_password=""
-
-welcome() {
-    printf "${ORANGE}                                                                      ${RESET}\n";
-    printf "${ORANGE} ██████╗ ██╗████████╗    ██╗    ██╗██╗███████╗ █████╗ ██████╗ ██████╗ ${RESET}\n";
-    printf "${ORANGE}██╔════╝ ██║╚══██╔══╝    ██║    ██║██║╚══███╔╝██╔══██╗██╔══██╗██╔══██╗${RESET}\n";
-    printf "${ORANGE}██║  ███╗██║   ██║       ██║ █╗ ██║██║  ███╔╝ ███████║██████╔╝██║  ██║${RESET}\n";
-    printf "${ORANGE}██║   ██║██║   ██║       ██║███╗██║██║ ███╔╝  ██╔══██║██╔══██╗██║  ██║${RESET}\n";
-    printf "${ORANGE}╚██████╔╝██║   ██║       ╚███╔███╔╝██║███████╗██║  ██║██║  ██║██████╔╝${RESET}\n";
-    printf "${ORANGE} ╚═════╝ ╚═╝   ╚═╝        ╚══╝╚══╝ ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ${RESET}\n";
-    printf "${ORANGE}                                                                      ${RESET}\n";
-    sleep 5
-
-    return 0
-}
-
-git_test() {
-    dots "Checking if git is installed"
-
-    if command_exists git; then
-        print_success "Git is already installed"
-        git_version=$(git --version)
-        printf '%s\n' "$git_version installed"
-        return 0
-    else
-        print_error "Git is not installed"
-        printf '%s\n' "Please install Git manually before running this script"
-        exit 1
-    fi
-}
 
 git_username () {
     read -erp "Enter your username for git: " git_username
