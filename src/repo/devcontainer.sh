@@ -11,8 +11,7 @@ devcontainer_setup() {
     touch docker/dev/{Dockerfile,compose.yaml} docker/prod/{Dockerfile,compose.yaml}
     print_success "Dockerfiles for production and development environments created"
                 
-    # Copia el archivo .dockerignore del template
-    cp templates/.dockerignore .dockerignore
+    cp "$WIZARD_DIR/src/templates/.dockerignore" .dockerignore
     print_success ".dockerignore file created"
                 
     print_success "Devcontainer support added to the repository"

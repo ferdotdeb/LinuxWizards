@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 
+WIZARD_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 source ./src/common.sh
 source ./src/welcome_functions/repo.sh
+source ./src/repo/devcontainer.sh
+source ./src/repo/agents.sh
 
 new_repo() {
     # 1) Ask for the target directory, default to current
@@ -57,17 +61,16 @@ basic_setup() {
 
     git init .
 
-    # Comprobar copia
-    cp templates/.gitignore .gitignore
+    cp "$WIZARD_DIR/src/templates/.gitignore" .gitignore
 
     # Create basic directories
     mkdir -p .vscode .github .github/ISSUE_TEMPLATE
 
     # Create basic project files
     touch -- .env .env.example .github/dependabot.yml .github/PULL_REQUEST_TEMPLATE.md
-    cp templates/README.md README.md
-    cp templates/CONTRIBUTING.md CONTRIBUTING.md
-    cp templates/LICENSE LICENSE
+    cp "$WIZARD_DIR/src/templates/README.md" README.md
+    cp "$WIZARD_DIR/src/templates/CONTRIBUTING.md" CONTRIBUTING.md
+    cp "$WIZARD_DIR/src/templates/LICENSE" LICENSE
 
     # Summary of created files
     printf '%s\n' "Basic project files created:"

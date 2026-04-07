@@ -63,7 +63,7 @@ agents_setup() {
                 touch -- .cursorignore
                 touch -- .cursorindexingignore
                 
-                cp src/repo/mdtomdc.sh .cursor/rules/mdtomdc.sh
+                cp "$WIZARD_DIR/src/repo/mdtomdc.sh" .cursor/rules/mdtomdc.sh
                 
                 chmod +x .cursor/rules/mdtomdc.sh
                 
