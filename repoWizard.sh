@@ -57,17 +57,17 @@ basic_setup() {
 
     git init .
 
-    # Create .gitignore
-    printf '%s\n' '.env' '.venv/' 'node_modules/' '*.log' '*.tmp' '.DS_Store' 'CLAUDE.local.md' >> .gitignore
+    # Comprobar copia
+    cp templates/.gitignore .gitignore
 
     # Create basic directories
     mkdir -p .vscode .github .github/ISSUE_TEMPLATE
 
     # Create basic project files
-    touch -- .env .env.example README.md CONTRIBUTING.md LICENSE .github/dependabot.yml .github/PULL_REQUEST_TEMPLATE.md
-    printf '%s\n' "# New Project" >> README.md
-    printf '%s\n' "# How to contribute?" >> CONTRIBUTING.md
-    printf '%s\n' "No license defined for this project yet." >> LICENSE
+    touch -- .env .env.example .github/dependabot.yml .github/PULL_REQUEST_TEMPLATE.md
+    cp templates/README.md README.md
+    cp templates/CONTRIBUTING.md CONTRIBUTING.md
+    cp templates/LICENSE LICENSE
 
     # Summary of created files
     printf '%s\n' "Basic project files created:"
