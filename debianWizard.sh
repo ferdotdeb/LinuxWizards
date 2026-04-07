@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-# Ensure this path is correct
 source ./src/common.sh
 
 root_test(){
@@ -13,7 +12,7 @@ root_test(){
     fi
 }
 
-source ./src/welcome_functions/deb.sh
+source ./src/deb/welcome.sh
 
 set_timezone(){
     dots "Setting timezone to America/Mexico_City"

@@ -3,7 +3,7 @@
 WIZARD_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 source ./src/common.sh
-source ./src/welcome_functions/repo.sh
+source ./src/repo/welcome.sh
 source ./src/repo/devcontainer.sh
 source ./src/repo/agents.sh
 
@@ -84,7 +84,7 @@ basic_setup() {
     return 0
 }
 
-container_setup() {
+use_container() {
     while :; do
     read -erp "Create the files and directories to support devcontainers? [Y/n] " ans
 
@@ -105,7 +105,7 @@ container_setup() {
     return 0
 }
 
-agents_support() {
+use_agents() {
     while :; do
         read -erp "Create the files and directories to support AI Agents? [Y/n] " ans
 
@@ -127,7 +127,6 @@ agents_support() {
 }
 
 finish_setup() {
-    # Git operations
     dots "Making initial commit"
     git add .
     git commit -m "🎉 Project created!"
@@ -146,7 +145,9 @@ main() {
     git_test
     new_repo
     basic_setup
-    
+    use_container
+    use_agents
+    finish_setup
     return 0
 }
 

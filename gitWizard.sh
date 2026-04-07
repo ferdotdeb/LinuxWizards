@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 source ./src/common.sh
-source ./src/welcome_functions/git.sh
+source ./src/git/welcome.sh
 
 # Global variables
 git_username=""

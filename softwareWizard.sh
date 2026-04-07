@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
-# Ensure this path is correct
 source ./src/common.sh
-source ./src/welcome_functions/software.sh
+source ./src/software/welcome.sh
 
 update_system
 

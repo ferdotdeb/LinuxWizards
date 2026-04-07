@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 source ./src/common.sh
-source ./src/welcome_functions/zsh.sh
+source ./src/zsh/welcome.sh
 
 ghostty_configs() {
     if command_exists ghostty; then
