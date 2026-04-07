@@ -64,7 +64,7 @@ setup_aliases() {
     dots "Copying .aliases file"
     dots "You can see the list of all aliases documented in the README file"
     
-    cp scripts/.aliases $HOME/.aliases || {
+    cp src/scripts/.aliases $HOME/.aliases || {
         print_error "Failed to copy aliases to the home directory"
         dots "Exiting"
         exit 1
@@ -76,10 +76,10 @@ setup_aliases() {
 add_bin(){
     mkdir -p ~/bin
 
-    cp scripts/mkrun ~/bin/mkrun
-    cp scripts/run ~/bin/run
-    cp scripts/autocommit ~/bin/autocommit
-    cp scripts/autopush ~/bin/autopush
+    cp src/scripts/mkrun ~/bin/mkrun
+    cp src/scripts/run ~/bin/run
+    cp src/scripts/autocommit ~/bin/autocommit
+    cp src/scripts/autopush ~/bin/autopush
 
     chmod +x ~/bin/mkrun
     chmod +x ~/bin/run
