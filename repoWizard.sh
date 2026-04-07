@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source ./common.sh
+source ./src/common.sh
 source ./src/welcome_functions/repo.sh
 
 new_repo() {
