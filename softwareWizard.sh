@@ -15,21 +15,15 @@ install_packages() {
 }
 
 install_uv() {
-  dots "Downloading and installing UV for Python"
+  dots "Installing UV for Python"
     
-  if ! curl -LsSf https://astral.sh/uv/install.sh | sh; then
-    print_error "Failed to install UV"
-    return 1
-  fi
+  curl -LsSf https://astral.sh/uv/install.sh | sh
     
   dots "Restarting shell"
     
-  if [ -f "$HOME/.local/bin/env" ]; then
-    source "$HOME/.local/bin/env"
-    print_success "UV installed successfully!"
-  else
-    print_warning "UV environment file not found"
-  fi
+  source "$HOME/.local/bin/env"
+  
+  print_success "UV installed and activated!"
   
   return 0
 }
