@@ -31,8 +31,6 @@ EOF
 return 0
 }
 
-update_system
-
 install_zsh() {
     dots  "Installing zsh shell"
     sudo apt-get install -y zsh
