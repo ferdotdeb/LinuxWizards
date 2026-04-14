@@ -1,29 +1,7 @@
 #!/usr/bin/env bash
 
-# Ensure this path is correct
-source ./common.sh
-
-welcome() {
-  printf "${BLUE}                                                                                                                     ${RESET}\n";
-  printf "${BLUE}███████╗ ██████╗ ███████╗████████╗██╗    ██╗ █████╗ ██████╗ ███████╗    ██╗    ██╗██╗███████╗ █████╗ ██████╗ ██████╗ ${RESET}\n";
-  printf "${BLUE}██╔════╝██╔═══██╗██╔════╝╚══██╔══╝██║    ██║██╔══██╗██╔══██╗██╔════╝    ██║    ██║██║╚══███╔╝██╔══██╗██╔══██╗██╔══██╗${RESET}\n";
-  printf "${BLUE}███████╗██║   ██║█████╗     ██║   ██║ █╗ ██║███████║██████╔╝█████╗      ██║ █╗ ██║██║  ███╔╝ ███████║██████╔╝██║  ██║${RESET}\n";
-  printf "${BLUE}╚════██║██║   ██║██╔══╝     ██║   ██║███╗██║██╔══██║██╔══██╗██╔══╝      ██║███╗██║██║ ███╔╝  ██╔══██║██╔══██╗██║  ██║${RESET}\n";
-  printf "${BLUE}███████║╚██████╔╝██║        ██║   ╚███╔███╔╝██║  ██║██║  ██║███████╗    ╚███╔███╔╝██║███████╗██║  ██║██║  ██║██████╔╝${RESET}\n";
-  printf "${BLUE}╚══════╝ ╚═════╝ ╚═╝        ╚═╝    ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝     ╚══╝╚══╝ ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ${RESET}\n";
-  printf "${BLUE}                                                                                                                     ${RESET}\n";
-  sleep 5
-
-  return 0
-}
-
-updating_system() {
-  dots "Updating system packages..."
-  sudo apt-get update && sudo apt-get upgrade -y
-  print_success "System packages updated!"
-  
-  return 0
-}
+source ./src/common.sh
+source ./src/software/welcome.sh
 
 install_packages() {
   dots "Installing essential APT packages"
@@ -34,32 +12,99 @@ install_packages() {
   return 0
 }
 
+install_dev_browsers() {
+  dots "Installing Google Chrome"
+  wget https://dl.google.com/linux/direct/google-chrome-unstable_current_amd64.deb
+  sudo apt-get install -y ./google-chrome-unstable_current_amd64.deb
+  rm google-chrome-unstable_current_amd64.deb
+  print_success "Google Chrome installed"
+
+  dots "Installing Firefox Developer Edition"
+  sudo install -d -m 0755 /etc/apt/keyrings
+
+  wget -q https://packages.mozilla.org/apt/repo-signing-key.gpg -O- | sudo tee /etc/apt/keyrings/packages.mozilla.org.asc > /dev/null
+
+  cat <<EOF | sudo tee /etc/apt/sources.list.d/mozilla.sources
+Types: deb
+URIs: https://packages.mozilla.org/apt
+Suites: mozilla
+Components: main
+Signed-By: /etc/apt/keyrings/packages.mozilla.org.asc
+EOF
+
+cat <<EOF | sudo tee /etc/apt/preferences.d/mozilla
+Package: *
+Pin: origin packages.mozilla.org
+Pin-Priority: 1000
+EOF
+
+  sudo apt-get update && sudo apt-get install -y firefox-devedition
+  
+  print_success "Firefox Developer Edition installed"
+
+  return 0
+}
+
 install_uv() {
-  dots "Downloading and installing UV for Python"
+  dots "Installing UV for Python"
     
-  if ! curl -LsSf https://astral.sh/uv/install.sh | sh; then
-    print_error "Failed to install UV"
-    return 1
-  fi
+  curl -LsSf https://astral.sh/uv/install.sh | sh
     
   dots "Restarting shell"
     
-  if [ -f "$HOME/.local/bin/env" ]; then
-    source "$HOME/.local/bin/env"
-    print_success "UV installed successfully!"
-  else
-    print_warning "UV environment file not found"
-  fi
+  source "$HOME/.local/bin/env"
+  
+  print_success "UV installed and activated!"
   
   return 0
 }
 
 install_agents() {
-  dots "Installing OpenCode"
-  curl -fsSL https://opencode.ai/install | bash
+  dots "Installing AI Agents"
+  
+  while :; do
+    read -erp "Install OpenCode? [Y/n] " ans
+    case $ans in
+        [Yy]*|"")
+            dots "Installing OpenCode"
+            curl -fsSL https://opencode.ai/install | bash
+            if command_exists opencode; then
+              print_success "OpenCode installed"
+            else
+              print_error "OpenCode is not available in PATH"
+            fi
+            break
+            ;;
+        [Nn]*)
+            break
+            ;;
+        *)
+            print_error "Invalid input, choose between y or n"
+            ;;
+      esac
+  done
 
-  dots "Installing Claude Code"
-  curl -fsSL https://claude.ai/install.sh | bash
+  while :; do
+    read -erp "Install Claude Code? [Y/n] " ans
+    case $ans in
+        [Yy]*|"")
+            dots "Installing Claude Code"
+            curl -fsSL https://claude.ai/install.sh | bash
+            if command_exists claude; then
+              print_success "Claude Code installed"
+            else
+              print_error "Claude Code is not available in PATH"
+            fi
+            break
+            ;;
+        [Nn]*)
+            break
+            ;;
+        *)
+            print_error "Invalid input, choose between y or n"
+            ;;
+      esac
+  done
 
   return 0
 }
@@ -94,8 +139,9 @@ manual_links() {
 # Main execution
 main() {
   welcome
-  updating_system
+  update_system
   install_packages
+  install_dev_browsers
   install_uv
   install_agents
   manual_links

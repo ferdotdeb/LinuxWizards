@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# Ensure this path is correct
-source ./common.sh
+source ./src/common.sh
+source ./src/alias/welcome.sh
 
 ALIAS_SOURCE_BLOCK='if [[ -f ~/.aliases ]]; then
     . ~/.aliases
@@ -10,20 +10,6 @@ fi'
 BIN_SOURCE_BLOCK='if [[ -d "$HOME/bin" ]] && [[ ":$PATH:" != *":$HOME/bin:"* ]]; then
     export PATH="$HOME/bin:$PATH"
 fi'
-
-welcome() {
-    printf "${YELLOW}                                                                                    ${RESET}\n";
-    printf "${YELLOW} █████╗ ██╗     ██╗ █████╗ ███████╗    ██╗    ██╗██╗███████╗ █████╗ ██████╗ ██████╗ ${RESET}\n";
-    printf "${YELLOW}██╔══██╗██║     ██║██╔══██╗██╔════╝    ██║    ██║██║╚══███╔╝██╔══██╗██╔══██╗██╔══██╗${RESET}\n";
-    printf "${YELLOW}███████║██║     ██║███████║███████╗    ██║ █╗ ██║██║  ███╔╝ ███████║██████╔╝██║  ██║${RESET}\n";
-    printf "${YELLOW}██╔══██║██║     ██║██╔══██║╚════██║    ██║███╗██║██║ ███╔╝  ██╔══██║██╔══██╗██║  ██║${RESET}\n";
-    printf "${YELLOW}██║  ██║███████╗██║██║  ██║███████║    ╚███╔███╔╝██║███████╗██║  ██║██║  ██║██████╔╝${RESET}\n";
-    printf "${YELLOW}╚═╝  ╚═╝╚══════╝╚═╝╚═╝  ╚═╝╚══════╝     ╚══╝╚══╝ ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ${RESET}\n";
-    printf "${YELLOW}                                                                                    ${RESET}\n";
-    sleep 5
-
-    return 0
-}
 
 config_source() {
     dots "Searching for your current shell"
@@ -78,7 +64,7 @@ setup_aliases() {
     dots "Copying .aliases file"
     dots "You can see the list of all aliases documented in the README file"
     
-    cp scripts/.aliases $HOME/.aliases || {
+    cp src/scripts/.aliases $HOME/.aliases || {
         print_error "Failed to copy aliases to the home directory"
         dots "Exiting"
         exit 1
@@ -90,10 +76,10 @@ setup_aliases() {
 add_bin(){
     mkdir -p ~/bin
 
-    cp scripts/mkrun ~/bin/mkrun
-    cp scripts/run ~/bin/run
-    cp scripts/autocommit ~/bin/autocommit
-    cp scripts/autopush ~/bin/autopush
+    cp src/scripts/mkrun ~/bin/mkrun
+    cp src/scripts/run ~/bin/run
+    cp src/scripts/autocommit ~/bin/autocommit
+    cp src/scripts/autopush ~/bin/autopush
 
     chmod +x ~/bin/mkrun
     chmod +x ~/bin/run

@@ -1,65 +1,33 @@
 # LinuxWizards
 
-A collection of powerful shell scripts to automate the setup and configuration of a developer-friendly Linux environment.
+A collection of Bash-based setup wizards to automate the setup and configuration of a developer-friendly Linux environment.
 
 ## Features
 
 - **Software Wizard:** Installs essential development software, Python UV, AI agents, and provides manual installation links.
-- **Git Wizard:** Automates Git configuration and SSH key generation for seamless version control.
+- **Git Wizard:** Automates Git configuration and SSH key generation for version control and SSH-based commit signing.
 - **Alias Wizard:** Sets up a comprehensive list of shell aliases and helper scripts to boost productivity in the terminal.
-- **Repo Wizard:** Initializes new Git repositories with standard configurations and project structures.
-- **Debian Wizard:** Performs Debian-specific system configurations and fixes.
-- **Z Shell Wizard:** Installs and configures zsh with Oh My Zsh and Powerlevel10k theme.
+- **Repo Wizard:** Initializes new Git repositories with standard files, optional devcontainer support, and AI agent scaffolding.
+- **Debian Wizard:** Performs Debian-specific system configuration and cleanup tasks.
+- **Z Shell Wizard:** Installs and configures zsh with Oh My Zsh and the Powerlevel10k theme.
 
 ## Prerequisites
 
-- Linux distribution, MacOS or any system with Bash shell support.
-- Debian or a Debian-based Linux distribution (Only for softwareWizard).
-- `sudo` or root privileges.
-- An active internet connection (For downloading software and updates).
+- A Linux system with Bash support. Most scripts are designed for Debian or Debian-based distributions.
+- `git` to clone the repository and manage generated repositories.
+- `sudo` or root privileges for `softwareWizard.sh`, `debianWizard.sh`, and parts of `z.sh`.
+- An active internet connection for package installation, downloads, and Git operations.
 
 ## Getting Started
 
 1. **Clone the repository:**
 
     ```bash
-    git clone https://github.com/ferdotdev/LinuxWizards.git
+    git clone https://github.com/don-linux/LinuxWizards.git
     cd LinuxWizards
     ```
 
-    **1.1. Or download the scripts individually:**
-
-    Use `curl` to download the scripts you need. Note that `common.sh` is required by all other scripts.
-
-    ```bash
-    curl -O https://raw.githubusercontent.com/ferdotdev/LinuxWizards/main/common.sh
-    ```
-
-    ```bash
-    curl -O https://raw.githubusercontent.com/ferdotdev/LinuxWizards/main/softwareWizard.sh
-    ```
-
-    ```bash
-    curl -O https://raw.githubusercontent.com/ferdotdev/LinuxWizards/main/gitWizard.sh
-    ```
-
-    ```bash
-    curl -O https://raw.githubusercontent.com/ferdotdev/LinuxWizards/main/aliasWizard.sh
-    ```
-
-    ```bash
-    curl -O https://raw.githubusercontent.com/ferdotdev/LinuxWizards/main/repoWizard.sh
-    ```
-
-    ```bash
-    curl -O https://raw.githubusercontent.com/ferdotdev/LinuxWizards/main/debianWizard.sh
-    ```
-
-    ```bash
-    curl -O https://raw.githubusercontent.com/ferdotdev/LinuxWizards/main/z.sh
-    ```
-
-2. **Grant execution permissions:**
+2. **Grant execution permissions if needed:**
 
     You need to make the scripts executable. You can do this with the following command:
 
@@ -67,7 +35,7 @@ A collection of powerful shell scripts to automate the setup and configuration o
     chmod +x scriptName.sh
     ```
 
-3. **Run the desired script:**
+3. **Run the desired script from the repository root:**
 
     Execute the script you need. In general, the command is:
 
@@ -75,98 +43,104 @@ A collection of powerful shell scripts to automate the setup and configuration o
     ./scriptName.sh
     ```
 
+`LinuxWizards` must be cloned as a complete repository. The entry-point scripts source files from `./src/...`, so downloading individual scripts is not a supported workflow and running them outside the repository root will fail.
+
 ## Scripts Breakdown
 
-### `common.sh`
+The entry-point scripts live in the repository root, while shared code and assets live under `src/`.
 
-This is a utility script and should not be executed directly. It provides shared functions used by all other scripts including:
+### `src/common.sh`
+
+This utility file should not be executed directly. It provides shared functions used across the wizards, including:
 
 - Color management with `NO_COLOR` support
 - Print helpers (`print_success`, `print_error`, `print_warning`)
 - Progress indicators (`dots`)
 - Command existence checks (`command_exists`)
 - Clickable terminal links (`print_link`)
+- Shared Git and update helpers used by multiple scripts
 
 ### `softwareWizard.sh`
 
-This script automates the installation of essential software for developers. It performs the following tasks:
+This entry-point wizard uses `src/common.sh` and `src/software/` helpers to automate essential software installation. It performs the following tasks:
 
 - Updates system packages via APT
-- Installs essential packages: `vim`, `vlc`, `git`, `fastfetch`, `openssh-client`, `solaar`, `curl`, `wget`
+- Installs essential packages: `vim`, `vlc`, `git`, `fastfetch`, `openssh-client`, `solaar`, `curl`, `wget`, `libfuse2`
 - Installs UV (modern Python package manager)
 - Installs AI agents: OpenCode and Claude Code
-- Provides clickable links for manual installation of: Node.js, Docker, Spotify, VS Code, and Cursor
+- Provides clickable links for manual installation of Node.js, Docker, Spotify, VS Code, and Cursor
 
-**Requires:** sudo or root privileges.
+**Requires:** `sudo` or root privileges.
 
 ### `gitWizard.sh`
 
 This script streamlines your Git setup by performing the following:
 
 - Validates Git installation
-- Prompts for username and email (with email format validation)
+- Prompts for username and email with email format validation
 - Creates an ED25519 SSH key with passphrase protection
-- Sets proper permissions for SSH keys
-- Adds the key to SSH agent
+- Sets proper permissions for SSH keys and adds the key to `ssh-agent`
+- Saves the public key to `public_key.txt`
 - Configures global Git settings including:
   - Default branch: `main`
-  - Pull strategy: merge (no rebase)
   - Auto setup remote on push
-  - SSH-based GPG signing
-  - Enhanced diff and merge settings
+  - Default editor: `nano`
+  - SSH-based signing when `~/.ssh/id_ed25519.pub` exists
+  - Fast-forward-only pulls and enhanced diff/merge settings
 
 ### `repoWizard.sh`
 
 This script automates the creation of new Git repositories with a standardized structure:
 
-- Initializes Git repository in specified directory
-- Creates basic files: `.gitignore`, `README.md`, `CONTRIBUTING.md`, `LICENSE`, `.env`, `.env.example`
-- Optional devcontainer setup with Docker directories and configuration files
-- Optional AI agents support (AGENTS.md, .claude, .github, .cursor directories)
-- Creates `.dockerignore` for containerized projects
-- Makes initial commit with emoji (🎉 Project created!)
-- Creates and switches to `dev` branch
+- Initializes a Git repository in the selected directory
+- Copies base project files from `src/templates/`, including `README.md`, `CONTRIBUTING.md`, `LICENSE`, and `.gitignore`
+- Creates `.env`, `.env.example`, `.vscode`, and `.github` scaffolding
+- Optionally creates devcontainer and Docker support through `src/repo/devcontainer.sh`
+- Optionally creates AI agent support for Cursor, GitHub Copilot, OpenCode, Claude Code, and Google Antigravity through `src/repo/agents.sh`
+- Creates `.dockerignore` from `src/templates/.dockerignore` when container support is enabled
+- Makes the initial `🎉 Project created!` commit
+- Creates and switches to the `dev` branch
 
 ### `aliasWizard.sh`
 
 This script enhances terminal productivity by:
 
-- Detecting shell type (bash or zsh)
-- Copying `scripts/.aliases` to `~/.aliases`
-- Adding source block to `.bashrc` or `.zshrc` (idempotent)
-- Installing helper scripts to `~/bin`: `run`, `mkrun`, `autocommit`, `autopush`
-- Adding `~/bin` to PATH
+- Detecting the current shell (`bash` or `zsh`)
+- Copying `src/scripts/.aliases` to `~/.aliases`
+- Adding an idempotent source block to `.bashrc` or `.zshrc`
+- Installing helper scripts from `src/scripts/` to `~/bin`: `run`, `mkrun`, `autocommit`, `autopush`
+- Adding `~/bin` to `PATH`
 
-**Supports:** bash and zsh shells.
+**Supports:** `bash` and `zsh`.
 
 ### `debianWizard.sh`
 
 This script performs Debian-specific system configurations:
 
-- Sets timezone to America/Mexico_City (customizable)
-- Removes outdated LibreOffice APT packages
+- Re-executes itself with `sudo` when needed
+- Sets the timezone to `America/Mexico_City`
+- Removes outdated LibreOffice APT packages and leftover configuration
 - Configures Vim with line numbers
 - Installs Realtek firmware and Blueman for Bluetooth support
 
-**Requires:** sudo or root privileges. Automatically re-executes with sudo if not running as root.
+**Requires:** `sudo` or root privileges. Automatically re-executes with sudo if not running as root.
 **Recommended for:** Debian 13.
 
 ### `z.sh`
 
 This script sets up a modern zsh environment:
 
-- Adds Ghostty terminal configurations (if installed)
-- Sets custom dircolors for better visual contrast
-- Installs zsh shell
+- Adds Ghostty terminal configuration if Ghostty is already installed
+- Writes custom `~/.dircolors` values for improved contrast
+- Updates the system and installs `zsh`
 - Installs Oh My Zsh framework
-- Installs Powerlevel10k theme
-- Configures zsh to use Powerlevel10k
+- Installs the Powerlevel10k theme and configures `.zshrc`
 
 **Note:** Requires MesloLGS NF Regular Nerd Font to be installed and set as terminal font.
 
 ## Alias Reference
 
-The `aliasWizard.sh` script copies the alias file from `scripts/.aliases` to `~/.aliases` and configures your shell to source it. The following aliases are included:
+The `aliasWizard.sh` script copies the alias file from `src/scripts/.aliases` to `~/.aliases` and configures your shell to source it. The following aliases are included:
 
 | Category | Alias | Original Command | Description |
 | :--- | :--- | :--- | :--- |
@@ -252,7 +226,9 @@ The `aliasWizard.sh` script copies the alias file from `scripts/.aliases` to `~/
 | | `gitundo` | `git reset --soft HEAD~1` | Undo the last commit, keeping changes staged. |
 | | `gitunstage` | `git reset HEAD --` | Unstage files from the index. |
 | | `gitrepair` | `sudo chown -R "$(whoami)":"$(id -gn)" .git` | Fix ownership issues in the `.git` directory. |
-| | `gitclean` | `git fetch origin --prune` | Remove remote-tracking branches that no longer exist on the remote. |
+| | `gitlocal` | `git config --local commit.gpgsign false` | Disable commit signing for the current repository only. |
+| | `cleanremote` | `git fetch origin --prune` | Remove remote-tracking branches that no longer exist on the remote. |
+| | `deleteremote` | `git push origin --delete` | Delete a remote branch by name. |
 | **AI Agents** | | | |
 | | `cld` | `claude` | Shortcut for Claude AI agent CLI. |
 | | `ocd` | `opencode` | Shortcut for OpenCode AI agent CLI. |
@@ -264,7 +240,7 @@ The `aliasWizard.sh` script copies the alias file from `scripts/.aliases` to `~/
 
 ## Helper Scripts
 
-The `aliasWizard.sh` script installs the following helper scripts to `~/bin` and adds this directory to your PATH:
+The repository contains additional utilities under `src/scripts/`, but `aliasWizard.sh` currently installs the following helper scripts to `~/bin` and adds this directory to your `PATH`:
 
 ### `run`
 

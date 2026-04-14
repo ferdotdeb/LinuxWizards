@@ -88,3 +88,42 @@ dots() {
 print_link() {
     printf '\e]8;;%s\e\\%s\e]8;;\e\\\n' "$1" "$1"
 }
+
+update_system() {
+  dots "Updating system packages..."
+  sudo apt-get update && sudo apt-get upgrade -y
+  print_success "System packages updated!"
+  
+  return 0
+}
+
+validate_email() {
+    local email="$1"
+    local regex="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    
+    if [[ $email =~ $regex ]]; then
+        return 0
+    else
+        print_error "Invalid email format"
+        return 1
+    fi
+}
+
+git_test() {
+    dots "Checking if git is installed"
+
+    if command_exists git; then
+        print_success "Git is already installed"
+        git_version=$(git --version)
+        printf '%s\n' "$git_version installed"
+
+        return 0
+    else
+        print_error "Git is not installed."
+        printf '%s\n' "Please install Git manually before running this script."
+        
+        exit 1
+    fi
+
+    return 0
+}
