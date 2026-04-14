@@ -10,7 +10,7 @@
 .cursor/
 .agent/
 .opencode
-.node_modules/
+node_modules/
 .env.example
 *.log
 *.tmp
