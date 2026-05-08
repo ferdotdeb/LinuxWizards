@@ -42,6 +42,11 @@ alias srcbash='source ~/.bashrc'
 alias c='code .'
 alias code='code .'
 alias cursor='cursor .'
+alias xz9='xz -k -9'
+alias zip9='zip -r -9'
+alias unzipf='unzip -o'
+alias tarxz='tar -cJf'
+alias untar='tar -xf'
 
 # Docker shortcuts
 alias dc='docker'
