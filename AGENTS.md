@@ -1,15 +1,18 @@
-# LinuxWizards
+# AGENTS.md
 
-- Run the `*Wizard.sh` entrypoints from the repo root. They `source ./src/...` with relative paths, so launching them from a subdirectory breaks.
-- The top-level scripts are thin wrappers; put shared logic in `src/common.sh` and area-specific logic in `src/<area>/*.sh`.
-- These entrypoints are not standalone downloads. They depend on the checked-out `src/` tree.
-- `src/templates/` is the source for files `repoWizard.sh` copies into new repos. Edit templates, not generated repos, when changing scaffold content.
-- `src/repo/agents.sh` and `src/repo/mdtomdc.sh` generate agent-support folders/symlinks. Keep them in sync with any `.agents/rules` changes.
-- `aliasWizard.sh` only supports bash/zsh. It copies `src/scripts/.aliases` to `~/.aliases`, appends source blocks to `~/.bashrc` or `~/.zshrc`, and installs helper scripts from `src/scripts/` into `~/bin`.
-- If you add or rename helpers under `src/scripts/`, update `aliasWizard.sh` so the installed set stays in sync.
-- `gitWizard.sh` creates an `ed25519` SSH key, starts `ssh-agent`, and writes global Git config, including SSH signing when `~/.ssh/id_ed25519.pub` exists.
-- `softwareWizard.sh`, `debianWizard.sh`, and `z.sh` are privileged, networked installers. They modify apt state and user config such as `~/.ssh`, `~/.dircolors`, `~/.config/ghostty/config`, `~/.bashrc`, and `~/.zshrc`.
-- `debianWizard.sh` re-execs itself with `sudo` when needed and is intended for Debian 13.
-- `z.sh` expects MesloLGS Nerd Font for Powerlevel10k.
-- `repoWizard.sh` initializes a new repo from the templates, makes an initial `🎉 Project created!` commit, and switches the new repo to `dev`.
-- There is no package manager, formatter, or test runner configured here; for shell edits use `bash -n <file>` and a disposable run of the affected wizard.
+## Repo Shape
+- Root `*.sh` files are the entrypoints: `softwareWizard.sh`, `gitWizard.sh`, `aliasWizard.sh`, `repoWizard.sh`, `debianWizard.sh`, and `z.sh`.
+- Shared code lives in `src/common.sh` and the `src/<wizard>/` folders; scripts source files with repo-relative paths like `./src/common.sh`, so run them from the repository root.
+- `repoWizard.sh` is the repo scaffolder. It copies templates from `src/templates/` and can create `.agents/`, `.cursor/`, `.opencode/`, `.claude/`, `.agent/`, and `.github/` support trees depending on the chosen agent target.
+
+## Commands
+- Run a wizard directly from the repo root, for example `./softwareWizard.sh` or `./repoWizard.sh`.
+- `repoWizard.sh` makes an initial `git commit -m "🎉 Project created!"` and switches to a new `dev` branch.
+- `aliasWizard.sh` writes `~/.aliases`, appends shell source blocks to `~/.bashrc` or `~/.zshrc`, and installs helper scripts into `~/bin`.
+- `gitWizard.sh`, `softwareWizard.sh`, `debianWizard.sh`, and `z.sh` make system changes and may require `sudo`.
+
+## Repo Conventions
+- `src/common.sh` is shared utility code and should not be executed directly.
+- `NO_COLOR` disables colored output in shared helpers.
+- The repo is Bash-only; there is no package manager or test runner to discover here.
+- `src/templates/README.md` is a scaffold template, not the project README.
