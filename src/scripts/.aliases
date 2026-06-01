@@ -51,10 +51,10 @@ alias untar='tar -xf'
 # Docker shortcuts
 alias dc='docker'
 alias dcu='docker compose up -d'
+alias dcd='docker compose down'
 alias dci='docker images'
-alias dcps='docker ps'
-alias dcpsa='docker ps -a'
-alias dcrm='docker rm'
+alias dcps='docker ps -a'
+alias dcrm='docker rm -f'
 alias dcrmi='docker rmi'
 alias dockerclean='docker system prune -a --volumes'
 
@@ -92,14 +92,15 @@ alias gitunstage='git reset HEAD --'
 alias gitrepair='sudo chown -R "$(whoami)":"$(id -gn)" .git'
 alias gitlocal='git config --local commit.gpgsign false'
 alias cleanremote='git fetch origin --prune'
-alias deleteremote ='git push origin --delete'
+alias deleteremote='git push origin --delete'
 
 # AI Agents
 alias cld='claude'
 alias ocd='opencode'
 
 # Miscellaneous
-alias h='history'
 alias rootrc='code .bashrc --no-sandbox --user-data-dir'
 alias rootzrc='code .zshrc --no-sandbox --user-data-dir'
 alias rootaliases='code .aliases --no-sandbox --user-data-dir'
+alias h='history'
+search() { history | grep "$1" | tail -n 10; }
