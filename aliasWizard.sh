@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 source ./src/common.sh
-source ./src/alias/welcome.sh
+source ./src/welcome/welcome_alias.sh
 
 ALIAS_SOURCE_BLOCK='if [[ -f ~/.aliases ]]; then
     . ~/.aliases

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 source ./src/common.sh
-source ./src/software/welcome.sh
+source ./src/welcome/welcome_software.sh
 
 install_packages() {
   dots "Installing essential APT packages"
