@@ -12,7 +12,7 @@ root_test(){
     fi
 }
 
-source ./src/deb/welcome.sh
+source ./src/welcome/welcome_deb.sh
 
 set_timezone(){
     dots "Setting timezone to America/Mexico_City"

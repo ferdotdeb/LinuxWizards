@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
 source ./src/common.sh
-source ./src/zsh/welcome.sh
+source ./src/welcome/welcome_zsh.sh
 
 ghostty_configs() {
     if command_exists ghostty; then
         dots "Adding ghostty configs"
-        printf '%s\n' "theme = Homebrew" >> ~/.config/ghostty/config
+        printf '%s\n' "theme = Vercel" >> ~/.config/ghostty/config
         printf '%s\n' "bell-features = no-title,no-attention" >> ~/.config/ghostty/config
         printf '%s\n' "shell-integration-features = ssh-env" >> ~/.config/ghostty/config
         return 0
@@ -15,20 +15,6 @@ ghostty_configs() {
 
         return 0
     fi
-}
-
-set_colors() {
-    dots "Setting custom dircolors"
-
-    cat > ~/.dircolors <<'EOF'
-    # Directories (More contrast than blue)
-    DIR 01;36
-    # Symlinks and executables (optional)
-    LINK 01;35
-    EXEC 01;32
-EOF
-
-return 0
 }
 
 install_zsh() {
@@ -78,8 +64,6 @@ finish_setup() {
 main() {
     welcome
     ghostty_configs
-    set_colors
-    update_system
     install_zsh
     setup_zsh_theme
     activate_zsh

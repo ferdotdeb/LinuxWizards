@@ -3,7 +3,7 @@
 WIZARD_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 source ./src/common.sh
-source ./src/repo/welcome.sh
+source ./src/welcome/welcome_repo.sh
 source ./src/repo/devcontainer.sh
 source ./src/repo/agents.sh
 
